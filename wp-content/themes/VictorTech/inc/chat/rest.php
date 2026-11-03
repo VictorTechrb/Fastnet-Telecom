@@ -33,6 +33,12 @@ function fastnet_chat_register_routes()
         ),
     ));
 
+    register_rest_route('fastnet-chat/v1', '/session/(?P<session_id>[a-f0-9-]{36})/media/(?P<message_id>\\d+)', array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => 'fastnet_chat_get_private_media_endpoint',
+        'permission_callback' => 'fastnet_chat_authorize_request',
+    ));
+
     register_rest_route('fastnet-chat/v1', '/webhook', array(
         'methods' => WP_REST_Server::CREATABLE,
         'callback' => 'fastnet_chat_receive_opa_webhook',
@@ -66,7 +72,7 @@ function fastnet_chat_list_messages_endpoint($request)
 
     if (0 === $after_id) {
         $rows = $wpdb->get_results(
-            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' ORDER BY id DESC LIMIT 100", $session_id),
+            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,media_data,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' ORDER BY id DESC LIMIT 100", $session_id),
             ARRAY_A
         );
         $rows = array_reverse(is_array($rows) ? $rows : array());
@@ -82,12 +88,21 @@ function fastnet_chat_list_messages_endpoint($request)
     foreach ((array) $rows as $row) {
         $id = (int) $row['id'];
         $last_id = max($last_id, $id);
+        $has_private_media = !empty($row['media_data']);
+        $media_url = (string) $row['media_url'];
+        if ($has_private_media) {
+            $media_url = rest_url(
+                'fastnet-chat/v1/session/' . rawurlencode($session_id) . '/media/' . $id
+            );
+        }
+
         $messages[] = array(
             'id' => $id,
             'direction' => $row['direction'],
             'type' => $row['message_type'],
             'text' => (string) $row['message_text'],
-            'media_url' => (string) $row['media_url'],
+            'media_url' => $media_url,
+            'media_private' => $has_private_media,
             'media_name' => (string) $row['media_name'],
             'media_type' => (string) $row['media_type'],
             'created_at' => $row['created_at'],
@@ -96,6 +111,55 @@ function fastnet_chat_list_messages_endpoint($request)
 
     fastnet_chat_touch_session($session_id);
     return new WP_REST_Response(array('messages' => $messages, 'last_id' => $last_id), 200);
+}
+
+
+function fastnet_chat_get_private_media_endpoint($request)
+{
+    global $wpdb;
+
+    $session_id = (string) $request['session_id'];
+    $message_id = absint($request['message_id']);
+    $table = fastnet_chat_messages_table();
+
+    $row = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT media_data,media_type FROM {$table} WHERE id = %d AND session_id = %s AND message_type = 'media' LIMIT 1",
+            $message_id,
+            $session_id
+        ),
+        ARRAY_A
+    );
+
+    if (!$row || empty($row['media_data'])) {
+        return new WP_Error('chat_media_not_found', 'Anexo não encontrado nesta conversa.', array('status' => 404));
+    }
+
+    $mime = sanitize_text_field((string) $row['media_type']);
+    $allowed_mime_types = array(
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+        'application/pdf', 'text/plain', 'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/x-wav',
+    );
+
+    if (!in_array($mime, $allowed_mime_types, true)) {
+        return new WP_Error('chat_media_invalid_type', 'O tipo do anexo armazenado não é permitido.', array('status' => 415));
+    }
+
+    $decoded = base64_decode((string) $row['media_data'], true);
+    if (false === $decoded || 0 === strlen($decoded)) {
+        return new WP_Error('chat_media_corrupt', 'Não foi possível recuperar este anexo.', array('status' => 500));
+    }
+
+    $response = new WP_REST_Response(
+        array('data_url' => 'data:' . $mime . ';base64,' . base64_encode($decoded)),
+        200
+    );
+    $response->header('Cache-Control', 'private, no-store, max-age=0');
+    return $response;
 }
 
 function fastnet_chat_send_message_endpoint($request)
