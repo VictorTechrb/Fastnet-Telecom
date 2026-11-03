@@ -44,7 +44,7 @@ function fastnet_chat_config()
 
     return array(
         'api_url' => $valid_url ? untrailingslashit(esc_url_raw($api_url)) : '',
-        'channel_id' => $valid_channel ? $channel : '';
+        'channel_id' => $valid_channel ? $channel : '',
         'token' => $token,
         'webhook_secret' => $signature,
         'ready' => $valid_url && $valid_channel && '' !== $token && '' !== $signature,
