@@ -395,5 +395,5 @@ if (is_page_template('page-sobre.php') || is_page('sobre')) {
     );
 }
 
-// Atendimento Fastnet: módulo isolado em inc/chat/.
-require_once get_template_directory() . '/inc/chat/bootstrap.php';
+// Carrega o atendimento online oficial da Fastnet Telecom.
+require_once get_template_directory() . '/inc/atendimento/inicializacao.php';

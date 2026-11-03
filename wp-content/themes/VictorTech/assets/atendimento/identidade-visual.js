@@ -2,12 +2,12 @@
     'use strict';
 
     /*
-     * O Webchat oficial cria seu próprio botão com a classe .opa_ico.
-     * A personalização é aplicada ao elemento existente, sem interceptar
-     * mensagens, sessões ou a comunicação com o Opa! Suite.
+     * O Webchat oficial cria o próprio botão com a classe .opa_ico.
+     * A identidade visual é aplicada ao elemento existente, sem interferir
+     * nas mensagens ou na comunicação com o Opa! Suite.
      */
     var classeIdentidade = 'acionador-webchat-fastnet';
-    var acionadorPersonalizado = null;
+    var botaoPersonalizado = null;
 
     function aplicarIdentidadeFastnet() {
         var iconeWebchat = document.querySelector('.opa_ico');
@@ -16,26 +16,26 @@
             return;
         }
 
-        var acionadorWebchat = iconeWebchat.closest('button, [role="button"], a');
+        var botaoAtendimento = iconeWebchat.closest('button, [role="button"], a');
 
-        if (!acionadorWebchat) {
-            acionadorWebchat = iconeWebchat.parentElement || iconeWebchat;
+        if (!botaoAtendimento) {
+            botaoAtendimento = iconeWebchat.parentElement || iconeWebchat;
         }
 
-        if (!acionadorWebchat || acionadorWebchat === document.body) {
+        if (!botaoAtendimento || botaoAtendimento === document.body) {
             return;
         }
 
-        if (acionadorPersonalizado && acionadorPersonalizado !== acionadorWebchat) {
-            acionadorPersonalizado.classList.remove(classeIdentidade);
+        if (botaoPersonalizado && botaoPersonalizado !== botaoAtendimento) {
+            botaoPersonalizado.classList.remove(classeIdentidade);
         }
 
-        acionadorWebchat.classList.add(classeIdentidade);
-        acionadorWebchat.setAttribute(
+        botaoAtendimento.classList.add(classeIdentidade);
+        botaoAtendimento.setAttribute(
             'aria-label',
             'Abrir atendimento online da Fastnet Telecom em Sergipe'
         );
-        acionadorWebchat.setAttribute(
+        botaoAtendimento.setAttribute(
             'title',
             'Atendimento Fastnet Telecom em Sergipe'
         );
@@ -44,7 +44,7 @@
             iconeWebchat.setAttribute('alt', 'Abrir atendimento Fastnet Telecom');
         }
 
-        acionadorPersonalizado = acionadorWebchat;
+        botaoPersonalizado = botaoAtendimento;
     }
 
     function acompanharWebchat() {
