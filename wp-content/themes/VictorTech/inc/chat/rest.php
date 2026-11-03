@@ -54,7 +54,7 @@ function fastnet_chat_create_session_endpoint($request)
     }
 
     $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : 'unknown';
-    if (!fastnet_chat_rate_limit('session', 8, 600, $ip)) {
+    if (!fastnet_chat_rate_limit('session', 60, 600, $ip)) {
         return new WP_Error('chat_rate_limited', 'Muitas tentativas. Aguarde um pouco e tente novamente.', array('status' => 429));
     }
 
