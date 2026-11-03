@@ -2,7 +2,7 @@
 'use strict';
 var config=window.FastnetChatConfig||{},launcher=document.querySelector('.widget-chat'),panel=document.querySelector('.fastnet-chat-panel');
 if(!launcher||!panel||!config.restUrl){return;}
-var storageKey='fastnet_chat_session_v2',session=null,messages=[],lastMessageId=0,unread=0,pollTimer=null,pollDelay=4000,isOpen=false,isSending=false,initializing=true,pendingOpen=false,polling=false,recorder=null,stream=null,chunks=[],recordTimer=null,recordStart=0,discard=false;
+var storageKey='fastnet_chat_session_v2',session=null,messages=[],lastMessageId=0,unread=0,pollTimer=null,pollDelay=4000,isOpen=false,isSending=false,initializing=false,ready=false,pendingOpen=false,polling=false,recorder=null,stream=null,chunks=[],recordTimer=null,recordStart=0,discard=false;
 var decision=panel.querySelector('[data-chat-decision]'),first=panel.querySelector('[data-chat-first]'),conversation=panel.querySelector('[data-chat-conversation]'),fallback=panel.querySelector('[data-chat-fallback]'),fallbackLink=panel.querySelector('[data-chat-fallback-link]'),messagesNode=panel.querySelector('[data-chat-messages]'),form=panel.querySelector('[data-chat-form]'),input=panel.querySelector('[data-chat-input]'),recordButton=panel.querySelector('[data-chat-record]'),sendButton=panel.querySelector('[data-chat-send]'),audioSend=panel.querySelector('[data-chat-audio-send]'),recordingPanel=panel.querySelector('[data-chat-recording]'),recordingTime=panel.querySelector('[data-chat-recording-time]'),pauseButton=panel.querySelector('[data-chat-audio-pause]'),discardButton=panel.querySelector('[data-chat-audio-discard]'),statusNode=panel.querySelector('[data-chat-record-status]'),fileInput=panel.querySelector('[data-chat-file]'),fileButton=panel.querySelector('[data-chat-file-button]'),photoInput=panel.querySelector('[data-chat-photo]'),photoButton=panel.querySelector('[data-chat-photo-button]'),plusButton=panel.querySelector('[data-chat-plus]'),plusMenu=panel.querySelector('[data-chat-plus-menu]'),locationButton=panel.querySelector('[data-chat-location]'),badge=launcher.querySelector('[data-chat-unread]'),maximizeButton=panel.querySelector('[data-chat-maximize]');
 function status(value){statusNode.textContent=value||'';}
 function setUnread(value){unread=Math.max(0,Number(value)||0);badge.textContent=String(unread);badge.hidden=unread<1;}
@@ -24,7 +24,7 @@ function showFallback(){first.hidden=true;decision.hidden=true;conversation.hidd
 function showConversation(){first.hidden=true;decision.hidden=true;fallback.hidden=true;conversation.hidden=false;renderMessages();setUnread(0);status('');if(document.activeElement!==input){input.focus();}}
 function showDecision(){first.hidden=true;decision.hidden=false;conversation.hidden=true;fallback.hidden=true;}
 function showFirst(){first.hidden=false;decision.hidden=true;conversation.hidden=true;fallback.hidden=true;}
-function openChat(force){showPanel(true);if(initializing){pendingOpen=true;showFirst();status('Preparando seu atendimento...');return;}if(!session){showFallback();return;}if(!force&&messages.length){showDecision();}else if(!messages.length){showFirst();}else{showConversation();}fetchMessages(false).catch(function(){status('Não foi possível atualizar as mensagens. Verifique sua conexão.');});}
+function openChat(force){showPanel(true);if(!ready){pendingOpen=true;showFirst();status('Preparando seu atendimento...');initialize();return;}if(!session){showFallback();return;}if(!force&&messages.length){showDecision();}else if(!messages.length){showFirst();}else{showConversation();}fetchMessages(false).catch(function(){status('Não foi possível atualizar as mensagens. Verifique sua conexão.');});}
 function minimize(){showPanel(false);}
 function standalone(){var url=new URL(location.href);url.searchParams.set('fastnet_chat','standalone');window.open(url.toString(),'_blank','noopener,noreferrer');}
 function newConversation(){stopPolling();createSession().then(function(){showConversation();schedulePolling(500);}).catch(function(e){status(e.message||'Não foi possível iniciar uma nova conversa.');});}
@@ -56,7 +56,42 @@ fileInput.addEventListener('change',function(){if(fileInput.files&&fileInput.fil
 photoButton.addEventListener('click',function(){photoInput.click();});
 photoInput.addEventListener('change',function(){if(photoInput.files&&photoInput.files[0]){sendFile(photoInput.files[0]);}photoInput.value='';});
 locationButton.addEventListener('click',function(){plusMenu.hidden=true;plusButton.setAttribute('aria-expanded','false');sendLocation();});
-function initialize(){loadSession();fallbackLink.hidden=!config.fallbackUrl;if(config.fallbackUrl){fallbackLink.href=config.fallbackUrl;}var ready;if(session){ready=fetchMessages(true).catch(function(error){if(error.status===401||error.status===404){session=null;saveSession();return createSession();}throw error;});}else{ready=createSession();}ready.then(function(){initializing=false;var isStandalone=new URLSearchParams(location.search).get('fastnet_chat')==='standalone';if(document.querySelector('.pagina-atendimento')||isStandalone||pendingOpen){openChat(true);}if(isStandalone){document.documentElement.classList.add('fastnet-chat-standalone');panel.classList.add('is-maximized');maximizeButton.setAttribute('aria-pressed','true');maximizeButton.textContent='❐';}schedulePolling(4000);}).catch(function(error){initializing=false;showFallback();status(error.message||'O atendimento está temporariamente indisponível.');if(pendingOpen||document.querySelector('.pagina-atendimento')){openChat(true);}});}
+function initialize(){
+if(ready||initializing){return;}
+initializing=true;
+loadSession();
+fallbackLink.hidden=!config.fallbackUrl;
+if(config.fallbackUrl){fallbackLink.href=config.fallbackUrl;}
+var result;
+if(session){
+result=fetchMessages(true).catch(function(error){
+if(error.status===401||error.status===403||error.status===404){session=null;saveSession();return createSession();}
+throw error;
+});
+}else{
+result=createSession();
+}
+result.then(function(){
+initializing=false;
+ready=true;
+var isStandalone=new URLSearchParams(location.search).get('fastnet_chat')==='standalone';
+if(document.querySelector('.pagina-atendimento')||isStandalone||pendingOpen){
+pendingOpen=false;
+openChat(true);
+}
+if(isStandalone){
+document.documentElement.classList.add('fastnet-chat-standalone');
+panel.classList.add('is-maximized');
+maximizeButton.setAttribute('aria-pressed','true');
+maximizeButton.textContent='❐';
+}
+if(session){schedulePolling(4000);}
+}).catch(function(error){
+initializing=false;
+showFallback();
+status(error.message||'O atendimento está temporariamente indisponível.');
+});
+}
 document.addEventListener('visibilitychange',function(){pollDelay=document.hidden?8000:4000;if(!document.hidden){schedulePolling(500);}});
-updateComposer();setUnread(0);initialize();
+updateComposer();setUnread(0);if(document.querySelector('.pagina-atendimento')||new URLSearchParams(location.search).get('fastnet_chat')==='standalone'){openChat(true);}
 }());
