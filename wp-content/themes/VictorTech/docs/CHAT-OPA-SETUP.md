@@ -54,6 +54,7 @@ Proteja o arquivo com permissões restritas e não o publique.
 - Mensagens enviadas ao Opa! Suite exclusivamente pelo servidor WordPress.
 - Webhook com validação de X-Signature e deduplicação por ID remoto da mensagem.
 - Histórico persistido em tabelas próprias do WordPress.
+- A sessão OPA é criada somente depois que o visitante clica em Iniciar atendimento; abrir o widget não cria um contato.
 - Anexos enviados pelo visitante são guardados no banco e recuperados por endpoint privado que exige o token da sessão; não ficam em uma pasta pública.
 - Retomada da conversa no mesmo navegador e opção de iniciar nova conversa.
 - Atualização do painel por consulta à API REST local; o WordPress não consulta o Opa!, que envia respostas por webhook.
@@ -67,7 +68,7 @@ Proteja o arquivo com permissões restritas e não o publique.
 2. Configure o modo API no canal Opa! Suite e as credenciais no ambiente do servidor.
 3. Publique esta branch primeiro em ambiente de homologação.
 4. Verifique se a API REST do WordPress está disponível.
-5. Teste criação de sessão, envio de texto e resposta do atendente.
+5. Teste abrir e fechar o widget sem criar sessão; depois clique em Iniciar atendimento, envie texto e confirme a resposta do atendente.
 6. Teste imagem, PDF, documento, áudio, localização, retomada e nova conversa.
 7. Só depois do teste real aprove a integração em produção.
 

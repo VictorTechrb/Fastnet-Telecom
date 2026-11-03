@@ -35,6 +35,7 @@ function fastnet_chat_config()
     $token = fastnet_chat_secret('token', 'FASTNET_OPA_TOKEN');
     $signature = fastnet_chat_secret('webhook_secret', 'FASTNET_OPA_WEBHOOK_SECRET');
     $parts = wp_parse_url($api_url);
+    $valid_channel = (bool) preg_match('/^[a-zA-Z0-9_-]{1,100}$/', $channel);
     $valid_url = is_array($parts)
         && isset($parts['scheme'], $parts['host'])
         && 'https' === strtolower($parts['scheme'])
@@ -43,10 +44,10 @@ function fastnet_chat_config()
 
     return array(
         'api_url' => $valid_url ? untrailingslashit(esc_url_raw($api_url)) : '',
-        'channel_id' => sanitize_text_field($channel),
+        'channel_id' => $valid_channel ? $channel : '';
         'token' => $token,
         'webhook_secret' => $signature,
-        'ready' => $valid_url && '' !== $channel && '' !== $token && '' !== $signature,
+        'ready' => $valid_url && $valid_channel && '' !== $token && '' !== $signature,
     );
 }
 
