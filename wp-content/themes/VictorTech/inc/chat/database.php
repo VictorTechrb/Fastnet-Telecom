@@ -169,21 +169,3 @@ function fastnet_chat_remote_message_exists($remote_id)
     );
 }
 
-function fastnet_chat_schedule_cleanup()
-{
-    if (!wp_next_scheduled('fastnet_chat_daily_cleanup')) {
-        wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', 'fastnet_chat_daily_cleanup');
-    }
-}
-add_action('init', 'fastnet_chat_schedule_cleanup', 20);
-
-function fastnet_chat_cleanup_old_sessions()
-{
-    global $wpdb;
-    $sessions = fastnet_chat_sessions_table();
-    $messages = fastnet_chat_messages_table();
-
-    $wpdb->query("DELETE m FROM {$messages} AS m INNER JOIN {$sessions} AS s ON s.session_id = m.session_id WHERE s.last_activity < DATE_SUB(UTC_TIMESTAMP(), INTERVAL 90 DAY)");
-    $wpdb->query("DELETE FROM {$sessions} WHERE last_activity < DATE_SUB(UTC_TIMESTAMP(), INTERVAL 90 DAY)");
-}
-add_action('fastnet_chat_daily_cleanup', 'fastnet_chat_cleanup_old_sessions');
