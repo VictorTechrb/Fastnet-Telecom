@@ -72,13 +72,13 @@ function fastnet_chat_list_messages_endpoint($request)
 
     if (0 === $after_id) {
         $rows = $wpdb->get_results(
-            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,media_data,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' ORDER BY id DESC LIMIT 100", $session_id),
+            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,(media_data IS NOT NULL AND media_data <> '') AS has_private_media,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' ORDER BY id DESC LIMIT 100", $session_id),
             ARRAY_A
         );
         $rows = array_reverse(is_array($rows) ? $rows : array());
     } else {
         $rows = $wpdb->get_results(
-            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,media_data,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' AND id > %d ORDER BY id ASC LIMIT 100", $session_id, $after_id),
+            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,(media_data IS NOT NULL AND media_data <> '') AS has_private_media,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' AND id > %d ORDER BY id ASC LIMIT 100", $session_id, $after_id),
             ARRAY_A
         );
     }
@@ -88,7 +88,7 @@ function fastnet_chat_list_messages_endpoint($request)
     foreach ((array) $rows as $row) {
         $id = (int) $row['id'];
         $last_id = max($last_id, $id);
-        $has_private_media = !empty($row['media_data']);
+        $has_private_media = !empty($row['has_private_media']);
         $media_url = (string) $row['media_url'];
         if ($has_private_media) {
             $media_url = rest_url(
