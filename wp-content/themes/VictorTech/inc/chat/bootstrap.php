@@ -1,27 +1,48 @@
 <?php
 /**
- * Inicialização e carregamento dos assets do chat.
+ * Carrega o Webchat oficial do Opa! Suite.
+ *
+ * O OPA gerencia a interface, a sessão e o transporte das conversas.
+ * Não são registrados endpoints REST próprios nem chamadas do modo API.
  */
 if (!defined('ABSPATH')) { exit; }
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/database.php';
-require_once __DIR__ . '/service.php';
-require_once __DIR__ . '/rest.php';
 
-function fastnet_chat_enqueue_assets()
+function fastnet_chat_enqueue_opa_webchat()
 {
-    $directory = get_template_directory();
-    $uri = get_template_directory_uri();
-    $css = $directory . '/assets/chat/chat.css';
-    $js = $directory . '/assets/chat/chat.js';
+    $config = fastnet_chat_config();
+    if (empty($config['ready'])) {
+        return;
+    }
 
-    if (file_exists($css)) {
-        wp_enqueue_style('fastnet-chat', $uri . '/assets/chat/chat.css', array('victortech-style'), (string) filemtime($css));
-    }
-    if (file_exists($js)) {
-        wp_enqueue_script('fastnet-chat', $uri . '/assets/chat/chat.js', array(), (string) filemtime($js), true);
-        wp_localize_script('fastnet-chat', 'FastnetChatConfig', fastnet_chat_browser_config());
-    }
+    $script_url = trailingslashit($config['url']) . 'js/opa.js';
+    wp_enqueue_script(
+        'fastnet-opa-webchat',
+        esc_url($script_url),
+        array(),
+        null,
+        true
+    );
+
+    // Mantém as mesmas opções de login anônimo do script fornecido pela Fastnet.
+    $widget_options = array(
+        'permitir_login_anonimo' => 'on',
+        'facebook_appid' => '',
+        'google_credential' => '',
+        'google_oauth' => '',
+    );
+
+    // O terceiro argumento de opa.init() é uma string JSON, como no código oficial.
+    // A biblioteca é carregada depois do HTML principal, quando o body já existe.
+    $inline_script = 'if (typeof opa !== "undefined" && opa && typeof opa.init === "function") {' .
+        'opa.init(' .
+        wp_json_encode($config['url']) . ',' .
+        wp_json_encode($config['token']) . ',' .
+        wp_json_encode(wp_json_encode($widget_options)) .
+        ');' .
+        '}';
+
+    wp_add_inline_script('fastnet-opa-webchat', $inline_script, 'after');
 }
-add_action('wp_enqueue_scripts', 'fastnet_chat_enqueue_assets', 20);
+add_action('wp_enqueue_scripts', 'fastnet_chat_enqueue_opa_webchat', 30);
