@@ -17,6 +17,9 @@ function fastnet_chat_opa_endpoint()
 {
     $config = fastnet_chat_config();
     if (empty($config['ready'])) { return ''; }
+    if (!empty($config['legacy'])) {
+        return $config['api_url'] . '/api/v1/webchat/' . rawurlencode($config['channel_id']) . '/message';
+    }
     return $config['api_url'] . '/' . rawurlencode($config['channel_id']) . '/message';
 }
 

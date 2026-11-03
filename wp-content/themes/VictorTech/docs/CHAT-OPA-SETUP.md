@@ -29,6 +29,8 @@ O endpoint usado para envio é {API_BASE}/ID-DO-CANAL/message. O servidor envia 
 
 Não coloque credenciais no repositório, no tema, no JavaScript ou no wp-config.php enquanto esse arquivo estiver versionado no Git.
 
+Também é possível configurar pelo painel do WordPress em **Configurações → Atendimento Fastnet**. A tela simplificada aceita a URL do atendimento e um código único legado; esse código é usado como identificador do canal, autorização e assinatura. A tela exige a capacidade de administrador (`manage_options`), mantém o código como senha e não o envia ao navegador.
+
 Recomendado: configure as variáveis no ambiente do PHP (PHP-FPM/hosting):
 
 - FASTNET_OPA_API_URL: URL base mostrada em API de recebimento, sem ID do canal e sem /message.

@@ -10,7 +10,8 @@ function fastnet_chat_private_settings()
     static $settings = null;
     if (null !== $settings) { return $settings; }
 
-    $settings = array();
+    $settings = get_option('fastnet_chat_settings', array());
+    if (!is_array($settings)) { $settings = array(); }
     $path = getenv('FASTNET_CHAT_PRIVATE_CONFIG');
     if (is_string($path) && '' !== trim($path) && is_readable($path) && is_file($path)) {
         $loaded = require $path;
@@ -18,6 +19,72 @@ function fastnet_chat_private_settings()
     }
     return $settings;
 }
+
+function fastnet_chat_settings_sanitize($input)
+{
+    $input = is_array($input) ? $input : array();
+    $current = get_option('fastnet_chat_settings', array());
+    if (!is_array($current)) { $current = array(); }
+
+    $api_url = isset($input['api_url']) ? esc_url_raw(trim((string) $input['api_url'])) : '';
+    $legacy_key = isset($input['legacy_key']) ? trim((string) $input['legacy_key']) : '';
+
+    return array(
+        'api_url' => $api_url,
+        'legacy_key' => '' !== $legacy_key ? $legacy_key : (isset($current['legacy_key']) ? $current['legacy_key'] : ''),
+    );
+}
+
+function fastnet_chat_register_settings()
+{
+    register_setting(
+        'fastnet_chat_settings',
+        'fastnet_chat_settings',
+        array('sanitize_callback' => 'fastnet_chat_settings_sanitize')
+    );
+}
+add_action('admin_init', 'fastnet_chat_register_settings');
+
+function fastnet_chat_settings_page()
+{
+    if (!current_user_can('manage_options')) { return; }
+    ?>
+    <div class="wrap">
+        <h1>Atendimento Fastnet</h1>
+        <p>As credenciais ficam armazenadas nas opções privadas do WordPress e não são enviadas ao navegador.</p>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('fastnet_chat_settings');
+            $settings = get_option('fastnet_chat_settings', array());
+            ?>
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><label for="fastnet-chat-api-url">URL do atendimento</label></th>
+                    <td><input name="fastnet_chat_settings[api_url]" id="fastnet-chat-api-url" type="url" class="regular-text" value="<?php echo esc_attr(isset($settings['api_url']) ? $settings['api_url'] : ''); ?>" required></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="fastnet-chat-legacy-key">Código do atendimento</label></th>
+                    <td><input name="fastnet_chat_settings[legacy_key]" id="fastnet-chat-legacy-key" type="password" class="regular-text" value="" autocomplete="new-password"><p class="description">Deixe vazio para manter o código atual.</p></td>
+                </tr>
+            </table>
+            <?php submit_button('Salvar configuração'); ?>
+        </form>
+        <p><strong>Webhook:</strong> <?php echo esc_html(rest_url('fastnet-chat/v1/webhook')); ?></p>
+    </div>
+    <?php
+}
+
+function fastnet_chat_add_settings_page()
+{
+    add_options_page(
+        'Atendimento Fastnet',
+        'Atendimento Fastnet',
+        'manage_options',
+        'fastnet-chat-settings',
+        'fastnet_chat_settings_page'
+    );
+}
+add_action('admin_menu', 'fastnet_chat_add_settings_page');
 
 function fastnet_chat_secret($key, $environment)
 {
@@ -31,9 +98,15 @@ function fastnet_chat_secret($key, $environment)
 function fastnet_chat_config()
 {
     $api_url = fastnet_chat_secret('api_url', 'FASTNET_OPA_API_URL');
+    $legacy_key = fastnet_chat_secret('legacy_key', 'FASTNET_OPA_LEGACY_KEY');
     $channel = fastnet_chat_secret('channel_id', 'FASTNET_OPA_CHANNEL_ID');
     $token = fastnet_chat_secret('token', 'FASTNET_OPA_TOKEN');
     $signature = fastnet_chat_secret('webhook_secret', 'FASTNET_OPA_WEBHOOK_SECRET');
+    if ('' !== $legacy_key) {
+        $channel = $legacy_key;
+        $token = $legacy_key;
+        $signature = $legacy_key;
+    }
     $parts = wp_parse_url($api_url);
     $valid_channel = (bool) preg_match('/^[a-zA-Z0-9_-]{1,100}$/', $channel);
     $valid_url = is_array($parts)
@@ -47,6 +120,7 @@ function fastnet_chat_config()
         'channel_id' => $valid_channel ? $channel : '',
         'token' => $token,
         'webhook_secret' => $signature,
+        'legacy' => '' !== $legacy_key,
         'ready' => $valid_url && $valid_channel && '' !== $token && '' !== $signature,
     );
 }
