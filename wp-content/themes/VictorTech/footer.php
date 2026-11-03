@@ -152,6 +152,17 @@ $logo_arquivo = get_template_directory() . '/assets/images/fastbranco.webp';
         </div>
     </div>
 </footer>
+
+<?php
+// Link acessível para quem desativou scripts no navegador.
+?>
+<noscript>
+    <p class="atendimento-sem-javascript">
+        Para falar com a Fastnet Telecom, acesse a
+        <a href="<?php echo esc_url(home_url('/atendimento/')); ?>">página de atendimento em Sergipe</a>.
+    </p>
+</noscript>
+
 <?php wp_footer(); ?>
 </body>
 </html>
