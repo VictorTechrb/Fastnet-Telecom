@@ -57,7 +57,7 @@ Proteja o arquivo com permissões restritas e não o publique.
 - Atualização do painel por consulta à API REST local; o WordPress não consulta o Opa!, que envia respostas por webhook.
 - Texto, anexos, fotos, áudio e localização enviada como link do Google Maps.
 - Limite de anexo local: até 10 MB, respeitando o limite do PHP/WordPress.
-- Limpeza automática de sessões sem atividade por 90 dias.
+- O histórico não é apagado automaticamente nesta versão; definir e aprovar a política de retenção antes da publicação.
 
 ## Publicação segura
 
@@ -78,6 +78,10 @@ O modo API precisa estar ativo no canal Opa! Suite. Sem essa configuração, o c
 - Se desativar e reativar Integrar aplicativo próprio no Opa! Suite, os tokens mudam e as variáveis do servidor precisam ser atualizadas.
 - O sucesso HTTP da OPA significa que a mensagem foi aceita para processamento, não que um atendente já a visualizou.
 - O histórico antigo mantido apenas no localStorage pelo chat Socket.IO não é migrado automaticamente para a nova sessão.
+
+## Retenção do histórico
+
+As mensagens e sessões são mantidas no banco do WordPress. Esta versão não executa exclusão automática, para evitar apagar conversas sem uma política de retenção aprovada. Defina com a Fastnet o prazo, a necessidade de exportação e o procedimento de exclusão antes de produção.
 
 ## Limitações conhecidas
 
