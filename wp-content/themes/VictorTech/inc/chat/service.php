@@ -98,9 +98,10 @@ function fastnet_chat_normalize_message($input)
         return new WP_Error('chat_invalid_media', 'Tipo de arquivo não permitido.', array('status' => 400));
     }
 
-    $max_bytes = (int) wp_max_upload_size();
-    if ($max_bytes < 1) { $max_bytes = 1024 * 1024; }
-    $max_bytes = min($max_bytes, 10 * 1024 * 1024);
+    $max_bytes = fastnet_chat_max_upload_bytes();
+    if ($max_bytes < 1) {
+        return new WP_Error('chat_upload_unavailable', 'O envio de anexos não está disponível neste servidor.', array('status' => 503));
+    }
     if (strlen($encoded) > (int) ceil($max_bytes * 1.4)) {
         return new WP_Error('chat_media_too_large', 'O arquivo excede o limite permitido pelo servidor.', array('status' => 413));
     }
