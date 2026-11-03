@@ -1,0 +1,55 @@
+name: Verificações de qualidade do atendimento
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "limpeza/**"
+  pull_request:
+    paths:
+      - "wp-content/themes/VictorTech/**"
+      - ".github/workflows/qualidade-atendimento.yml"
+
+jobs:
+  validar-php:
+    name: Validar PHP ${{ matrix.versao_php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        versao_php: ["7.4", "8.2"]
+    steps:
+      - name: Baixar arquivos do repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.versao_php }}
+          coverage: none
+
+      - name: Verificar sintaxe dos arquivos PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t arquivos < <(find wp-content/themes/VictorTech -type f -name '*.php' -print)
+          test "${#arquivos[@]}" -gt 0
+          for arquivo in "${arquivos[@]}"; do
+            php -l "$arquivo"
+          done
+
+  validar-javascript:
+    name: Validar JavaScript do atendimento
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar arquivos do repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Verificar sintaxe do atendimento online
+        run: node --check wp-content/themes/VictorTech/assets/atendimento/identidade-visual.js

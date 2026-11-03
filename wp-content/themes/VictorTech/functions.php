@@ -136,7 +136,7 @@ function victortech_atendimento_template($template)
 {
     if (victortech_is_atendimento_request()) {
         status_header(200);
-        $custom_template = get_theme_file_path('page-atendimento.php');
+        $custom_template = get_theme_file_path('pagina-atendimento.php');
         if (file_exists($custom_template)) {
             return $custom_template;
         }
@@ -395,5 +395,5 @@ if (is_page_template('page-sobre.php') || is_page('sobre')) {
     );
 }
 
-// Atendimento Fastnet: módulo isolado em inc/chat/.
-require_once get_template_directory() . '/inc/chat/bootstrap.php';
+// Carrega o atendimento online oficial da Fastnet Telecom.
+require_once get_template_directory() . '/inc/atendimento/inicializacao.php';

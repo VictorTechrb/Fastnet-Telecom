@@ -1,6 +1,6 @@
 /*
- * Identidade visual do atendimento Fastnet Telecom.
- * Personaliza o botão oficial do Webchat sem alterar o funcionamento do OPA.
+ * Identidade visual do atendimento online Fastnet Telecom.
+ * Personaliza o botão oficial do Opa! Suite sem alterar o envio das mensagens.
  */
 
 .acionador-webchat-fastnet {
@@ -82,7 +82,7 @@
     text-decoration: underline;
 }
 
-/* Página de atendimento: conteúdo real, legível e adaptado a celulares. */
+/* Apresentação da página de atendimento, com leitura confortável em celulares. */
 .pagina-atendimento-fastnet {
     min-height: 70vh;
     padding: clamp(48px, 7vw, 88px) 20px;
@@ -218,6 +218,16 @@
     color: #596273;
     font-size: .9rem;
     line-height: 1.65;
+}
+
+.pagina-atendimento-fastnet__cartao a {
+    display: inline-block;
+    margin-top: 12px;
+    color: #b71c1c;
+    font-size: .88rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .pagina-atendimento-fastnet__orientacao {
