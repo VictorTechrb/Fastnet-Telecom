@@ -529,3 +529,10 @@
   box-shadow: none;
 }
 .pagina-atendimento-body .fastnet-chat-panel__header { border-radius: 0; }
+
+/* Contingência quando a integração estiver indisponível. */
+.fastnet-chat-fallback { display:flex; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px; text-align:center; }
+.fastnet-chat-fallback p { margin:0; color:var(--wa-meta); font-size:.9rem; }
+.fastnet-chat-fallback .fastnet-chat-web-link { display:inline-flex; }
+.fastnet-chat-fallback [hidden] { display:none !important; }
+.fastnet-chat-form button:disabled, .fastnet-chat-tool:disabled { opacity:.5; cursor:not-allowed; }
