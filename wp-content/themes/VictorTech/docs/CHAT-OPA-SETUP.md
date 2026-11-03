@@ -13,14 +13,15 @@ O navegador chama somente a API REST do WordPress. O servidor WordPress chama o 
 
 Documentação oficial: https://central-opasuite.ixcsoft.com.br/documentacao/opa%21-store/canais-de-comunicacao/webchat-modo-api
 
-1. Acesse Opa! Store → Webchat → Acessar e abra o registro do canal.
-2. Em Integrar aplicativo próprio, ative o modo API.
-3. Em API de envio de mensagens, informe a URL HTTPS do endpoint WordPress:
+1. Confirme que o Webchat está instalado, com licença ativa e um agente virtual responsável pelo canal.
+2. Acesse Opa! Store → Webchat → Acessar e abra o registro do canal.
+3. Em Integrar aplicativo próprio, ative o modo API.
+4. Em API de envio de mensagens, informe a URL HTTPS do endpoint WordPress:
 
    https://SEU-SITE/wp-json/fastnet-chat/v1/webhook
 
-4. Salve e copie a API de recebimento de mensagens, o Token de autenticação do Opa! e o Token de segurança usado no cabeçalho X-Signature.
-5. Anote o ID do canal exibido no endereço do registro do Webchat.
+5. Salve e copie a API de recebimento de mensagens, o Token de autenticação do Opa! e o Token de segurança usado no cabeçalho X-Signature.
+6. Anote o ID do canal exibido no endereço do registro do Webchat.
 
 O endpoint usado para envio é {API_BASE}/ID-DO-CANAL/message. O servidor envia Authorization: Bearer TOKEN e confere o campo success do JSON, não apenas o status HTTP. A OPA documenta erros de validação que podem retornar HTTP 200.
 
@@ -53,6 +54,7 @@ Proteja o arquivo com permissões restritas e não o publique.
 - Mensagens enviadas ao Opa! Suite exclusivamente pelo servidor WordPress.
 - Webhook com validação de X-Signature e deduplicação por ID remoto da mensagem.
 - Histórico persistido em tabelas próprias do WordPress.
+- Anexos enviados pelo visitante são guardados no banco e recuperados por endpoint privado que exige o token da sessão; não ficam em uma pasta pública.
 - Retomada da conversa no mesmo navegador e opção de iniciar nova conversa.
 - Atualização do painel por consulta à API REST local; o WordPress não consulta o Opa!, que envia respostas por webhook.
 - Texto, anexos, fotos, áudio e localização enviada como link do Google Maps.
@@ -81,7 +83,7 @@ O modo API precisa estar ativo no canal Opa! Suite. Sem essa configuração, o c
 
 ## Retenção do histórico
 
-As mensagens e sessões são mantidas no banco do WordPress. Esta versão não executa exclusão automática, para evitar apagar conversas sem uma política de retenção aprovada. Defina com a Fastnet o prazo, a necessidade de exportação e o procedimento de exclusão antes de produção.
+As mensagens, sessões e anexos enviados pelos visitantes são mantidos no banco do WordPress. Anexos privados só são entregues após validar o token da sessão. Esta versão não executa exclusão automática, para evitar apagar conversas sem uma política de retenção aprovada. Defina com a Fastnet o prazo, a necessidade de exportação e o procedimento de exclusão antes de produção.
 
 ## Limitações conhecidas
 
