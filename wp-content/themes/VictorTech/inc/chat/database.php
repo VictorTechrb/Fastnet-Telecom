@@ -4,7 +4,7 @@
  */
 if (!defined('ABSPATH')) { exit; }
 
-define('FASTNET_CHAT_DB_VERSION', '1');
+define('FASTNET_CHAT_DB_VERSION', '2');
 
 function fastnet_chat_sessions_table()
 {
@@ -47,6 +47,7 @@ function fastnet_chat_install_tables()
         media_url text NULL,
         media_name varchar(255) NULL,
         media_type varchar(100) NULL,
+        media_data longtext NULL,
         delivery_status varchar(16) NOT NULL DEFAULT 'sent',
         created_at datetime NOT NULL,
         PRIMARY KEY  (id),
@@ -144,6 +145,7 @@ function fastnet_chat_store_message($data)
         'media_url' => null,
         'media_name' => null,
         'media_type' => null,
+        'media_data' => null,
         'delivery_status' => 'sent',
         'created_at' => current_time('mysql', true),
     );
@@ -151,7 +153,7 @@ function fastnet_chat_store_message($data)
     $ok = $wpdb->insert(
         fastnet_chat_messages_table(),
         $data,
-        array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+        array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
     );
 
     if (1 !== $ok) { return false; }
