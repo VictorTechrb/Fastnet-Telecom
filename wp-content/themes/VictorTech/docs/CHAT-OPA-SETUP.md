@@ -58,7 +58,7 @@ Proteja o arquivo com permissões restritas e não o publique.
 - Retomada da conversa no mesmo navegador e opção de iniciar nova conversa.
 - Atualização do painel por consulta à API REST local; o WordPress não consulta o Opa!, que envia respostas por webhook.
 - Texto, anexos, fotos, áudio e localização enviada como link do Google Maps.
-- Limite de anexo local: até 10 MB, respeitando o limite do PHP/WordPress.
+- Limite de anexo: até 10 MB, reduzido automaticamente para respeitar upload_max_filesize, post_max_size e a expansão do base64 no JSON. Se o servidor não comportar anexos, o chat mantém o envio de texto e informa a indisponibilidade.
 - O histórico não é apagado automaticamente nesta versão; definir e aprovar a política de retenção antes da publicação.
 
 ## Publicação segura
