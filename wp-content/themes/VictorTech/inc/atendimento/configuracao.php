@@ -79,6 +79,38 @@ function fastnet_obter_valor_atendimento($chave, $variaveis_servidor = array(), 
 }
 
 /**
+ * Valida o endereço principal do Webchat e remove a barra final.
+ */
+function fastnet_validar_endereco_opa($endereco)
+{
+    $endereco = esc_url_raw(trim((string) $endereco));
+    $partes_endereco = wp_parse_url($endereco);
+
+    $endereco_valido = is_array($partes_endereco)
+        && isset($partes_endereco['scheme'], $partes_endereco['host'])
+        && 'https' === strtolower($partes_endereco['scheme'])
+        && empty($partes_endereco['user'])
+        && empty($partes_endereco['pass'])
+        && empty($partes_endereco['query'])
+        && empty($partes_endereco['fragment'])
+        && (!isset($partes_endereco['path']) || '' === $partes_endereco['path'] || '/' === $partes_endereco['path']);
+
+    return $endereco_valido ? untrailingslashit($endereco) : '';
+}
+
+/**
+ * Valida o identificador público do canal utilizado pelo Webchat oficial.
+ */
+function fastnet_validar_identificador_canal($identificador)
+{
+    $identificador = trim((string) $identificador);
+
+    return preg_match('/^[a-zA-Z0-9_-]{1,128}$/', $identificador)
+        ? $identificador
+        : '';
+}
+
+/**
  * Valida os campos e preserva os dados que já estavam salvos.
  */
 function fastnet_validar_configuracoes_atendimento($entrada)
@@ -101,41 +133,23 @@ function fastnet_validar_configuracoes_atendimento($entrada)
             : (isset($atuais['channel_id']) ? (string) $atuais['channel_id'] : ''));
 
     $endereco_opa = isset($entrada['url_opa'])
-        ? esc_url_raw(trim((string) $entrada['url_opa']))
-        : $endereco_atual;
+        ? fastnet_validar_endereco_opa($entrada['url_opa'])
+        : fastnet_validar_endereco_opa($endereco_atual);
 
     $identificador_canal = isset($entrada['identificador_canal'])
-        ? trim(sanitize_text_field((string) $entrada['identificador_canal']))
+        ? fastnet_validar_identificador_canal(sanitize_text_field((string) $entrada['identificador_canal']))
         : '';
 
-    $partes_endereco = wp_parse_url($endereco_opa);
-
-    $endereco_valido = is_array($partes_endereco)
-        && isset($partes_endereco['scheme'], $partes_endereco['host'])
-        && 'https' === strtolower($partes_endereco['scheme'])
-        && empty($partes_endereco['user'])
-        && empty($partes_endereco['pass'])
-        && empty($partes_endereco['query'])
-        && empty($partes_endereco['fragment'])
-        && (!isset($partes_endereco['path']) || '' === $partes_endereco['path'] || '/' === $partes_endereco['path']);
-
-    if (!$endereco_valido) {
-        $endereco_opa = $endereco_atual;
+    if ('' === $endereco_opa) {
+        $endereco_opa = fastnet_validar_endereco_opa($endereco_atual);
     }
 
     if ('' === $identificador_canal) {
-        $identificador_canal = $identificador_atual;
-    }
-
-    if (
-        '' !== $identificador_canal
-        && !preg_match('/^[a-zA-Z0-9_-]{1,128}$/', $identificador_canal)
-    ) {
-        $identificador_canal = $identificador_atual;
+        $identificador_canal = fastnet_validar_identificador_canal($identificador_atual);
     }
 
     return array(
-        'url_opa' => untrailingslashit($endereco_opa),
+        'url_opa' => $endereco_opa,
         'identificador_canal' => $identificador_canal,
     );
 }
@@ -245,34 +259,25 @@ add_action('admin_menu', 'fastnet_adicionar_menu_configuracoes_atendimento');
  */
 function fastnet_obter_configuracao_webchat()
 {
-    $endereco_opa = fastnet_obter_valor_atendimento(
-        'url_opa',
-        array('FASTNET_OPA_WEBCHAT_URL', 'FASTNET_OPA_API_URL'),
-        array('api_url')
+    $endereco_opa = fastnet_validar_endereco_opa(
+        fastnet_obter_valor_atendimento(
+            'url_opa',
+            array('FASTNET_OPA_WEBCHAT_URL'),
+            array('api_url')
+        )
     );
 
-    $identificador_canal = fastnet_obter_valor_atendimento(
-        'identificador_canal',
-        array('FASTNET_OPA_WEBCHAT_TOKEN', 'FASTNET_OPA_LEGACY_KEY'),
-        array('legacy_key', 'channel_id')
+    $identificador_canal = fastnet_validar_identificador_canal(
+        fastnet_obter_valor_atendimento(
+            'identificador_canal',
+            array('FASTNET_OPA_WEBCHAT_TOKEN', 'FASTNET_OPA_LEGACY_KEY'),
+            array('legacy_key', 'channel_id')
+        )
     );
-
-    $partes_endereco = wp_parse_url($endereco_opa);
-
-    $endereco_valido = is_array($partes_endereco)
-        && isset($partes_endereco['scheme'], $partes_endereco['host'])
-        && 'https' === strtolower($partes_endereco['scheme'])
-        && empty($partes_endereco['user'])
-        && empty($partes_endereco['pass'])
-        && empty($partes_endereco['query'])
-        && empty($partes_endereco['fragment'])
-        && (!isset($partes_endereco['path']) || '' === $partes_endereco['path'] || '/' === $partes_endereco['path']);
-
-    $identificador_valido = (bool) preg_match('/^[a-zA-Z0-9_-]{1,128}$/', $identificador_canal);
 
     return array(
-        'endereco' => $endereco_valido ? untrailingslashit(esc_url_raw($endereco_opa)) : '',
-        'identificador' => $identificador_valido ? $identificador_canal : '',
-        'pronto' => $endereco_valido && $identificador_valido,
+        'endereco' => $endereco_opa,
+        'identificador' => $identificador_canal,
+        'pronto' => '' !== $endereco_opa && '' !== $identificador_canal,
     );
 }

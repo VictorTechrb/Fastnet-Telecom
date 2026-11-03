@@ -31,7 +31,7 @@ Depois, inicializa o Webchat com as opções fornecidas no código de instalaç�
 - `inc/atendimento/inicializacao.php`: inicia o Webchat e administra o título e a descrição da página de atendimento.
 - `assets/atendimento/identidade-visual.css`: identidade visual do botão e da página de atendimento.
 - `assets/atendimento/identidade-visual.js`: aplica os atributos de acessibilidade ao botão criado pelo OPA.
-- `pagina-atendimento.php`: conteúdo visível da página de atendimento.
+- `page-atendimento.php` (nome convencional dos modelos de página do WordPress): conteúdo visível da página de atendimento.
 
 ## Compatibilidade e segurança
 
