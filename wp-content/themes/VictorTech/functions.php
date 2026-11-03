@@ -136,7 +136,7 @@ function victortech_atendimento_template($template)
 {
     if (victortech_is_atendimento_request()) {
         status_header(200);
-        $custom_template = get_theme_file_path('pagina-atendimento.php');
+        $custom_template = get_theme_file_path('page-atendimento.php');
         if (file_exists($custom_template)) {
             return $custom_template;
         }
