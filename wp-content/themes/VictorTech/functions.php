@@ -67,17 +67,6 @@ function victortech_enqueue_assets()
         file_exists($style) ? filemtime($style) : wp_get_theme()->get('Version')
     );
 
-    // CSS específico do Chat (Separação de responsabilidades)
-    $chat_css = get_template_directory() . '/assets/css/chat.css';
-    if (file_exists($chat_css)) {
-        wp_enqueue_style(
-            'victortech-chat-style',
-            get_template_directory_uri() . '/assets/css/chat.css',
-            ['victortech-style'],
-            filemtime($chat_css)
-        );
-    }
-
     wp_enqueue_script(
         'victortech-carousel',
         get_template_directory_uri() . '/assets/js/carousel.js',
@@ -110,28 +99,6 @@ function victortech_enqueue_assets()
                 true
             );
         }
-    }
-    $script = get_template_directory() . '/assets/js/chat-opa.js';
-    if (file_exists($script)) {
-        wp_enqueue_script(
-            'victortech-chat',
-            get_template_directory_uri() . '/assets/js/chat-opa.js',
-            [],
-            filemtime($script),
-            true
-        );
-        wp_localize_script('victortech-chat', 'FastnetChatConfig', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('fastnet_opa_proxy'),
-            'opaUrl' => defined('FASTNET_OPA_BASE_URL')
-                ? esc_url_raw(FASTNET_OPA_BASE_URL)
-                : 'https://lara.fastnettelecom.com',
-            'opaToken' =>
-                function_exists('victortech_opa_token') &&
-                victortech_opa_token()
-                    ? victortech_opa_token()
-                    : '6ad119e915965df4d6479338',
-        ]);
     }
 }
 add_action('wp_enqueue_scripts', 'victortech_enqueue_assets');
@@ -418,10 +385,6 @@ function victortech_register_plan_fields()
 }
 add_action('acf/init', 'victortech_register_plan_fields');
 
-$opa_integration = get_template_directory() . '/inc/integracao-chat.php';
-if (file_exists($opa_integration)) {
-    require_once $opa_integration;
-}
 
 if (is_page_template('page-sobre.php') || is_page('sobre')) {
     wp_enqueue_style(
@@ -431,3 +394,6 @@ if (is_page_template('page-sobre.php') || is_page('sobre')) {
         '1.0'
     );
 }
+
+// Atendimento Fastnet: módulo isolado em inc/chat/.
+require_once get_template_directory() . '/inc/chat/bootstrap.php';

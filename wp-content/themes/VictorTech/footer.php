@@ -153,7 +153,7 @@ $logo_arquivo = get_template_directory() . '/assets/images/fastbranco.webp';
     </div>
 </footer>
 <?php if ( ! victortech_is_atendimento_request() ) : ?>
-    <?php get_template_part( 'template-parts/widget-chat' ); ?>
+    <?php get_template_part( 'template-parts/chat/widget' ); ?>
 <?php endif; ?>
 <?php wp_footer(); ?>
 </body>
