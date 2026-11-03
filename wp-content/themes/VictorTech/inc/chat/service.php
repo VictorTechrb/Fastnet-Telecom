@@ -128,7 +128,14 @@ function fastnet_chat_receive_opa_webhook($request)
     }
 
     $payload = $request->get_json_params();
-    if (!is_array($payload) || empty($payload['customerService']['canal_cliente']) || !isset($payload['message']) || !is_array($payload['message'])) {
+    if (
+        !is_array($payload)
+        || empty($payload['customerService'])
+        || !is_array($payload['customerService'])
+        || empty($payload['customerService']['canal_cliente'])
+        || !isset($payload['message'])
+        || !is_array($payload['message'])
+    ) {
         return new WP_REST_Response(array('success' => false), 400);
     }
 
@@ -173,6 +180,15 @@ function fastnet_chat_receive_opa_webhook($request)
         'created_at' => $created,
     ));
 
-    if (!$saved) { return new WP_REST_Response(array('success' => false), 500); }
+    if (!$saved) {
+        // Webhooks podem ser reenviados pela OPA; uma mensagem já gravada é sucesso idempotente.
+        if ('' !== $remote_id && fastnet_chat_remote_message_exists($remote_id)) {
+            return new WP_REST_Response(array('success' => true), 200);
+        }
+
+        error_log('Fastnet Chat: não foi possível persistir uma mensagem recebida pelo webhook.');
+        return new WP_REST_Response(array('success' => false), 500);
+    }
+
     return new WP_REST_Response(array('success' => true), 200);
 }
