@@ -73,13 +73,18 @@ function fastnet_chat_settings_sanitize($input)
         $api_url = isset($current['api_url']) ? (string) $current['api_url'] : '';
     }
 
+    // Migra automaticamente o ID do canal que já era salvo pela tela anterior.
+    $saved_token = isset($current['legacy_key'])
+        ? (string) $current['legacy_key']
+        : (isset($current['channel_id']) ? (string) $current['channel_id'] : '');
+
     if ('' === $token) {
         // Campo vazio mantém o identificador já salvo.
-        $token = isset($current['legacy_key']) ? (string) $current['legacy_key'] : '';
+        $token = $saved_token;
     }
 
     if ('' !== $token && !preg_match('/^[a-zA-Z0-9_-]{1,128}$/', $token)) {
-        $token = isset($current['legacy_key']) ? (string) $current['legacy_key'] : '';
+        $token = $saved_token;
     }
 
     return array(
@@ -104,6 +109,7 @@ function fastnet_chat_settings_page()
 
     $settings = get_option('fastnet_chat_settings', array());
     if (!is_array($settings)) { $settings = array(); }
+    $has_saved_token = !empty($settings['legacy_key']) || !empty($settings['channel_id']);
     ?>
     <div class="wrap">
         <h1>Atendimento Fastnet</h1>
@@ -137,7 +143,7 @@ function fastnet_chat_settings_page()
                             class="regular-text"
                             value=""
                             autocomplete="new-password"
-                            placeholder="<?php echo !empty($settings['legacy_key']) ? esc_attr__('Já configurado — deixe vazio para manter', 'victortech') : esc_attr__('Cole o segundo parâmetro de opa.init()', 'victortech'); ?>"
+                            placeholder="<?php echo $has_saved_token ? esc_attr__('Já configurado — deixe vazio para manter', 'victortech') : esc_attr__('Cole o segundo parâmetro de opa.init()', 'victortech'); ?>"
                         >
                         <p class="description">No script enviado, é o valor que aparece como segundo argumento de opa.init(), por exemplo o identificador iniciado por 6ad1. Deixe vazio para manter o valor atual.</p>
                     </td>
@@ -167,6 +173,12 @@ function fastnet_chat_config()
     // do widget com a URL /api/v1/webchat do modo API.
     $api_url = fastnet_chat_secret('api_url', 'FASTNET_OPA_WEBCHAT_URL');
     $token = fastnet_chat_secret('legacy_key', 'FASTNET_OPA_WEBCHAT_TOKEN', 'FASTNET_OPA_LEGACY_KEY');
+    if ('' === $token) {
+        $settings = fastnet_chat_private_settings();
+        if (isset($settings['channel_id']) && is_scalar($settings['channel_id'])) {
+            $token = trim((string) $settings['channel_id']);
+        }
+    }
 
     $parts = wp_parse_url($api_url);
     $valid_url = is_array($parts)
