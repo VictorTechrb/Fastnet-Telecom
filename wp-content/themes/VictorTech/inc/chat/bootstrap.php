@@ -22,7 +22,7 @@ function fastnet_chat_enqueue_opa_webchat()
         esc_url($script_url),
         array(),
         null,
-        false
+        true
     );
 
     // Mantém as mesmas opções de login anônimo do script fornecido pela Fastnet.
@@ -34,7 +34,7 @@ function fastnet_chat_enqueue_opa_webchat()
     );
 
     // O terceiro argumento de opa.init() é uma string JSON, como no código oficial.
-    // A biblioteca é carregada antes deste inline script, evitando corrida de inicialização.
+    // A biblioteca é carregada depois do HTML principal, quando o body já existe.
     $inline_script = 'if (typeof opa !== "undefined" && opa && typeof opa.init === "function") {' .
         'opa.init(' .
         wp_json_encode($config['url']) . ',' .
