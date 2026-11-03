@@ -74,7 +74,7 @@ function fastnet_chat_normalize_message($input)
 
         return array(
             'opa' => array('type' => 'text', 'text' => $text),
-            'stored' => array('message_type' => 'text', 'message_text' => $text, 'media_url' => null, 'media_name' => null, 'media_type' => null),
+            'stored' => array('message_type' => 'text', 'message_text' => $text, 'media_url' => null, 'media_name' => null, 'media_type' => null, 'media_data' => null),
         );
     }
 
@@ -115,7 +115,7 @@ function fastnet_chat_normalize_message($input)
             'type' => 'media',
             'media' => array('mediaType' => $mime, 'data' => $encoded, 'filename' => $filename),
         ),
-        'stored' => array('message_type' => 'media', 'message_text' => '', 'media_url' => null, 'media_name' => $filename, 'media_type' => $mime),
+        'stored' => array('message_type' => 'media', 'message_text' => '', 'media_url' => null, 'media_name' => $filename, 'media_type' => $mime, 'media_data' => base64_encode($decoded)),
     );
 }
 
