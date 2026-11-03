@@ -54,6 +54,21 @@ add_action('wp_head', 'fastnet_adicionar_descricao_seo_atendimento', 1);
  */
 function fastnet_carregar_webchat_oficial()
 {
+    $pasta_tema = get_template_directory();
+    $endereco_tema = get_template_directory_uri();
+    $arquivo_estilo = $pasta_tema . '/assets/atendimento/identidade-visual.css';
+    $arquivo_comportamento = $pasta_tema . '/assets/atendimento/identidade-visual.js';
+
+    // O conteúdo e a identidade da página continuam disponíveis mesmo sem o Webchat.
+    if (file_exists($arquivo_estilo)) {
+        wp_enqueue_style(
+            'fastnet-identidade-atendimento',
+            $endereco_tema . '/assets/atendimento/identidade-visual.css',
+            array('victortech-style'),
+            (string) filemtime($arquivo_estilo)
+        );
+    }
+
     $configuracao = fastnet_obter_configuracao_webchat();
 
     if (empty($configuracao['pronto'])) {
@@ -88,21 +103,6 @@ function fastnet_carregar_webchat_oficial()
         '}';
 
     wp_add_inline_script('fastnet-webchat-oficial', $codigo_inicializacao, 'after');
-
-    // Carrega os arquivos próprios de identidade visual da Fastnet.
-    $pasta_tema = get_template_directory();
-    $endereco_tema = get_template_directory_uri();
-    $arquivo_estilo = $pasta_tema . '/assets/atendimento/identidade-visual.css';
-    $arquivo_comportamento = $pasta_tema . '/assets/atendimento/identidade-visual.js';
-
-    if (file_exists($arquivo_estilo)) {
-        wp_enqueue_style(
-            'fastnet-identidade-atendimento',
-            $endereco_tema . '/assets/atendimento/identidade-visual.css',
-            array('victortech-style'),
-            (string) filemtime($arquivo_estilo)
-        );
-    }
 
     if (file_exists($arquivo_comportamento)) {
         wp_enqueue_script(
