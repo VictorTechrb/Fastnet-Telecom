@@ -22,15 +22,15 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: \${{ matrix.php-version }}
+          php-version: ${{ matrix.php-version }}
           coverage: none
       - name: Lint PHP theme files
         shell: bash
         run: |
           set -euo pipefail
           mapfile -t files < <(find wp-content/themes/VictorTech -type f -name '*.php' -print)
-          test "\${#files[@]}" -gt 0
-          for file in "\${files[@]}"; do
+          test "${#files[@]}" -gt 0
+          for file in "${files[@]}"; do
             php -l "$file"
           done
 
