@@ -78,7 +78,7 @@ function fastnet_chat_list_messages_endpoint($request)
         $rows = array_reverse(is_array($rows) ? $rows : array());
     } else {
         $rows = $wpdb->get_results(
-            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' AND id > %d ORDER BY id ASC LIMIT 100", $session_id, $after_id),
+            $wpdb->prepare("SELECT id,direction,message_type,message_text,media_url,media_name,media_type,media_data,created_at FROM {$table} WHERE session_id = %s AND delivery_status = 'sent' AND id > %d ORDER BY id ASC LIMIT 100", $session_id, $after_id),
             ARRAY_A
         );
     }
