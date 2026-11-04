@@ -91,6 +91,19 @@ function fastnet_registrar_tipos_de_conteudo() {
 add_action( 'init', 'fastnet_registrar_tipos_de_conteudo' );
 
 /**
+ * Atualiza as rotas uma única vez após a instalação dos novos tipos de conteúdo.
+ */
+function fastnet_atualizar_regras_de_reescrita() {
+    if ( '1' === get_option( 'fastnet_gerenciador_regras_versao' ) ) {
+        return;
+    }
+
+    flush_rewrite_rules( false );
+    update_option( 'fastnet_gerenciador_regras_versao', '1' );
+}
+add_action( 'init', 'fastnet_atualizar_regras_de_reescrita', 99 );
+
+/**
  * Lê os dados adicionais salvos em cada cadastro.
  */
 function fastnet_obter_dados_do_conteudo( $post_id ) {
@@ -545,11 +558,11 @@ function fastnet_carregar_recursos_admin_conteudo( $pagina ) {
     }
 
     $tela = get_current_screen();
-    if ( ! $tela || ! in_array( $tela->post_type, array( 'aplicativo_incluso', 'banner_fastnet' ), true ) ) {
+    $tipos = array( 'plano', 'aplicativo', 'aplicativo_incluso', 'banner_fastnet' );
+
+    if ( ! $tela || ! in_array( $tela->post_type, $tipos, true ) ) {
         return;
     }
-
-    wp_enqueue_media();
 
     $diretorio = get_template_directory();
     $endereco  = get_template_directory_uri();
@@ -560,6 +573,12 @@ function fastnet_carregar_recursos_admin_conteudo( $pagina ) {
         array(),
         file_exists( $diretorio . '/assets/css/administracao-conteudos.css' ) ? filemtime( $diretorio . '/assets/css/administracao-conteudos.css' ) : '1.0.0'
     );
+
+    if ( ! in_array( $tela->post_type, array( 'aplicativo_incluso', 'banner_fastnet' ), true ) ) {
+        return;
+    }
+
+    wp_enqueue_media();
 
     wp_enqueue_script(
         'fastnet-administracao-conteudos',
