@@ -34,7 +34,11 @@ foreach ( $apps_por_categoria as $chave => $categoria ) {
 
 $link_contratacao = ! empty( $dados['link_contratacao'] ) ? $dados['link_contratacao'] : ( isset( $configuracoes['whatsapp_url'] ) ? $configuracoes['whatsapp_url'] : '' );
 ?>
-<article class="cartao-plano-fastnet <?php echo ! empty( $dados['destaque'] ) ? 'cartao-plano-fastnet--destaque' : ''; ?>" data-plan-card data-plan-price="<?php echo esc_attr( $preco ); ?>">
+<article class="cartao-plano-fastnet <?php echo ! empty( $dados['destaque'] ) ? 'cartao-plano-fastnet--destaque' : ''; ?>"
+    data-plan-card
+    data-plan-price="<?php echo esc_attr( $preco ); ?>"
+    data-plan-name="<?php echo esc_attr( get_the_title() ); ?>"
+    data-plan-speed="<?php echo esc_attr( $velocidade ); ?>">
     <?php if ( ! empty( $dados['destaque'] ) ) : ?>
         <span class="plano-selo-destaque">Plano em destaque</span>
     <?php endif; ?>
@@ -109,7 +113,14 @@ $link_contratacao = ! empty( $dados['link_contratacao'] ) ? $dados['link_contrat
             <?php foreach ( $categorias_com_apps as $chave => $categoria ) : ?>
                 <div class="lista-opcoes-aplicativos <?php echo $primeiro_painel ? 'is-active' : ''; ?>" data-plan-panel="<?php echo esc_attr( $chave ); ?>" role="tabpanel" <?php echo $primeiro_painel ? '' : 'hidden'; ?>>
                     <?php foreach ( $categoria['apps'] as $aplicativo ) : ?>
-                        <button class="opcao-aplicativo" type="button" data-option-price="<?php echo esc_attr( $aplicativo['preco'] ); ?>" aria-pressed="false">
+                        <button
+                            class="opcao-aplicativo"
+                            type="button"
+                            data-option-price="<?php echo esc_attr( $aplicativo['preco'] ); ?>"
+                            data-option-name="<?php echo esc_attr( $aplicativo['nome'] ); ?>"
+                            data-option-category="<?php echo esc_attr( $categoria['titulo'] ); ?>"
+                            aria-pressed="false"
+                        >
                             <span class="opcao-aplicativo-nome">
                                 <?php if ( ! empty( $aplicativo['imagem_id'] ) ) : ?>
                                     <?php echo wp_get_attachment_image( absint( $aplicativo['imagem_id'] ), 'thumbnail', false, array( 'alt' => '', 'loading' => 'lazy' ) ); ?>
@@ -136,6 +147,12 @@ $link_contratacao = ! empty( $dados['link_contratacao'] ) ? $dados['link_contrat
     <?php endif; ?>
 
     <?php if ( $link_contratacao ) : ?>
-        <a class="plano-botao-contratar" href="<?php echo esc_url( $link_contratacao ); ?>" target="_blank" rel="noopener noreferrer">Contratar plano</a>
+        <a
+            class="plano-botao-contratar"
+            href="<?php echo esc_url( $link_contratacao ); ?>"
+            data-plan-contract
+            target="_blank"
+            rel="noopener noreferrer"
+        >Contratar plano</a>
     <?php endif; ?>
 </article>
