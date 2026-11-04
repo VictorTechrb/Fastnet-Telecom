@@ -11,5 +11,6 @@
     button.addEventListener('click', function () {
         var isOpen = menu.classList.toggle('is-open');
         button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        document.body.classList.toggle('menu-mobile-aberto', isOpen);
     });
 }());

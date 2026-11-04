@@ -22,7 +22,6 @@ $link_velocimetro = get_theme_mod( 'fastnet_link_velocimetro', 'https://speedixc
         <div class="container-cabecalho">
             <div class="atalhos-cabecalho">
                 <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="ativo">Para você</a>
-                <a href="<?php echo esc_url( home_url( '/para-empresas/' ) ); ?>">Para empresas</a>
             </div>
             <div class="contatos-cabecalho">
                 <span class="telefone-topo">Central: <strong><?php echo esc_html( $telefone_suporte ); ?></strong></span>
@@ -62,11 +61,6 @@ $link_velocimetro = get_theme_mod( 'fastnet_link_velocimetro', 'https://speedixc
                     )
                 );
                 ?>
-                <ul class="menu-fastnet">
-                    <li><a href="<?php echo esc_url( home_url( '/sobrenos/' ) ); ?>">Sobre Nós</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">Contato</a></li>
-                    <li><a href="<?php echo esc_url( home_url( '/contratoseguranca/' ) ); ?>">Contratos e Segurança</a></li>
-                </ul>
             </nav>
 
             <div class="acoes-direita-cabecalho">

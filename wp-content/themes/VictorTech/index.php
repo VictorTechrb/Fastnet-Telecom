@@ -21,7 +21,7 @@ if (!function_exists('fastnet_campo')) {
 
 $h1_seo_home = fastnet_campo('home_h1_seo', 'Internet 100% Fibra Óptica de alta velocidade');
 $titulo_planos = fastnet_campo('home_titulo_planos', 'Internet pensada para a sua rotina');
-$subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ópticao, estabilidade total e instalação rápida.');
+$subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra óptica, estabilidade total e instalação rápida.');
 ?>
 
 <main id="conteudo-principal" class="site-principal-telecom">
@@ -98,10 +98,16 @@ $subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ó
                 <?php else: ?>
                     <div class="slide-banner-item slide-padrao-telecom">
                         <div class="conteudo-slide">
-                            <span class="selo-fibra-optica">Ultravelocidade Fastnet</span>
-                            <h2 class="titulo-velocidade-mega">700 MEGA</h2>
-                            <p class="descricao-chamada-fibra">Conexão rápida e baixa latência para desfrutar dos seus
-                                melhores momentos.</p>
+                            <div class="chamada-plano-mobile">
+                                <span class="selo-fibra-optica">Internet 100% fibra óptica</span>
+                                <h2 class="titulo-chamada-mobile">Nós temos o plano perfeito para você!</h2>
+                                <p class="descricao-chamada-mobile">Internet com estabilidade e velocidade para toda a família.</p>
+                            </div>
+                            <div class="card-oferta-padrao">
+                                <span class="selo-fibra-optica">Ultravelocidade Fastnet</span>
+                                <h2 class="titulo-velocidade-mega">700 <small>MEGA</small></h2>
+                                <p class="descricao-chamada-fibra">Conexão rápida e baixa latência para desfrutar dos seus melhores momentos.</p>
+                            </div>
                             <a href="#planos" class="botao-assinar-fibra">Conhecer ofertas</a>
                         </div>
                     </div>
