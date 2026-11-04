@@ -5,23 +5,9 @@
 
 get_header();
 
-if (!function_exists('fastnet_campo')) {
-    function fastnet_campo($nome_campo, $padrao = '')
-    {
-        if (function_exists('get_field')) {
-            $valor = get_field($nome_campo);
-            if (!empty($valor)) {
-                return $valor;
-            }
-        }
-
-        return get_theme_mod($nome_campo, $padrao);
-    }
-}
-
-$h1_seo_home = fastnet_campo('home_h1_seo', 'Internet 100% Fibra Óptica de alta velocidade');
-$titulo_planos = fastnet_campo('home_titulo_planos', 'Internet pensada para a sua rotina');
-$subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra óptica, estabilidade total e instalação rápida.');
+$h1_seo_home = fastnet_campo_home( 'home_h1_seo', 'Internet 100% Fibra Óptica de alta velocidade' );
+$titulo_planos = fastnet_campo_home( 'home_titulo_planos', 'Internet pensada para a sua rotina' );
+$subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fibra óptica, estabilidade total e instalação rápida.' );
 ?>
 
 <main id="conteudo-principal" class="site-principal-telecom">
@@ -31,16 +17,20 @@ $subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ó
         <div class="molde-vitrine-carrossel">
             <div class="container-carrossel" data-carousel>
                 <?php
-                $banners = array();
-                if (function_exists('get_field')) {
-                    for ($numero_banner = 1; $numero_banner <= 4; $numero_banner++) {
-                        $imagem_banner = get_field('carrossel_' . $numero_banner);
-                        if ($imagem_banner) {
+                // Os banners cadastrados no menu Carrossel têm prioridade.
+                $banners = fastnet_obter_banners();
+
+                // Mantém os campos ACF antigos como alternativa durante a migração.
+                if ( empty( $banners ) && function_exists( 'get_field' ) ) {
+                    for ( $numero_banner = 1; $numero_banner <= 4; $numero_banner++ ) {
+                        $imagem_banner = get_field( 'carrossel_' . $numero_banner );
+                        if ( $imagem_banner ) {
                             $banners[] = array(
-                                'imagem' => $imagem_banner,
-                                'titulo' => get_field('carrossel_titulo_' . $numero_banner),
-                                'subtitulo' => get_field('carrossel_subtitulo_' . $numero_banner),
-                                'link' => get_field('carrossel_link_' . $numero_banner),
+                                'imagem'      => $imagem_banner,
+                                'titulo'      => get_field( 'carrossel_titulo_' . $numero_banner ),
+                                'subtitulo'   => get_field( 'carrossel_subtitulo_' . $numero_banner ),
+                                'link'        => get_field( 'carrossel_link_' . $numero_banner ),
+                                'texto_botao' => 'Conhecer ofertas',
                             );
                         }
                     }
@@ -54,7 +44,12 @@ $subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ó
                             $imagem_banner = $banner['imagem'];
                             $url_banner = is_array($imagem_banner) ? ($imagem_banner['url'] ?? '') : $imagem_banner;
                             $id_banner = is_array($imagem_banner) ? ($imagem_banner['ID'] ?? 0) : (int) $imagem_banner;
-                            $alt_banner = is_array($imagem_banner) && !empty($imagem_banner['alt']) ? $imagem_banner['alt'] : 'Oferta Fastnet Fibra Óptica';
+                            $alt_banner = is_array( $imagem_banner ) && ! empty( $imagem_banner['alt'] )
+                                ? $imagem_banner['alt']
+                                : ( $id_banner ? get_post_meta( $id_banner, '_wp_attachment_image_alt', true ) : '' );
+                            if ( '' === $alt_banner ) {
+                                $alt_banner = ! empty( $banner['titulo'] ) ? $banner['titulo'] : 'Oferta de internet Fastnet';
+                            }
                             ?>
                             <div class="slide-banner-item" data-carousel-slide>
                                 <?php if ($id_banner): ?>
@@ -84,7 +79,7 @@ $subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ó
                                             <p class="descricao-chamada-fibra"><?php echo esc_html($banner['subtitulo']); ?></p>
                                         <?php endif; ?>
                                         <a href="<?php echo esc_url($banner['link'] ? $banner['link'] : '#planos'); ?>"
-                                            class="botao-assinar-fibra">Assinar agora</a>
+                                            class="botao-assinar-fibra"><?php echo esc_html( ! empty( $banner['texto_botao'] ) ? $banner['texto_botao'] : 'Conhecer ofertas' ); ?></a>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -125,19 +120,31 @@ $subtitulo_planos = fastnet_campo('home_subtitulo_planos', 'Planos 100% fibra ó
 
             <div class="grade-planos-telecom">
                 <?php
+                $configuracoes_home = fastnet_obter_configuracoes_pagina_inicial();
+                $aplicativos_inclusos = fastnet_obter_aplicativos_inclusos();
+                $apps_por_categoria = fastnet_obter_aplicativos_por_categoria();
+
                 $query_planos = new WP_Query(
                     array(
-                        'post_type' => 'plano',
-                        'posts_per_page' => 4,
-                        'orderby' => 'menu_order date',
-                        'order' => 'ASC',
+                        'post_type'      => 'plano',
+                        'post_status'    => 'publish',
+                        'posts_per_page' => -1,
+                        'orderby'        => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
                     )
                 );
 
-                if ($query_planos->have_posts()):
-                    while ($query_planos->have_posts()):
+                if ( $query_planos->have_posts() ) :
+                    while ( $query_planos->have_posts() ) :
                         $query_planos->the_post();
-                        get_template_part('template-parts/card', 'plano');
+                        get_template_part(
+                            'template-parts/card',
+                            'plano',
+                            array(
+                                'aplicativos_inclusos' => $aplicativos_inclusos,
+                                'apps_por_categoria'   => $apps_por_categoria,
+                                'configuracoes'        => $configuracoes_home,
+                            )
+                        );
                     endwhile;
                     wp_reset_postdata();
                 else:

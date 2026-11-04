@@ -1,4 +1,4 @@
-name: Verificações de qualidade do atendimento
+name: Verificações de qualidade do tema Fastnet
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
           done
 
   validar-javascript:
-    name: Validar JavaScript do atendimento
+    name: Validar JavaScript do tema
     runs-on: ubuntu-latest
     steps:
       - name: Baixar arquivos do repositório
@@ -51,5 +51,12 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Verificar sintaxe do atendimento online
-        run: node --check wp-content/themes/VictorTech/assets/atendimento/identidade-visual.js
+      - name: Verificar sintaxe dos arquivos JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' -t arquivos < <(find wp-content/themes/VictorTech -type f -name '*.js' -print0)
+          test "${#arquivos[@]}" -gt 0
+          for arquivo in "${arquivos[@]}"; do
+            node --check "$arquivo"
+          done

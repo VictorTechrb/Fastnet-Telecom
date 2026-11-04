@@ -43,5 +43,26 @@ function victortech_enqueue_assets() {
         filemtime( $tema_dir . '/assets/js/carousel.js' ),
         true
     );
+
+    wp_enqueue_style(
+        'victortech-conteudos-dinamicos',
+        $tema_uri . '/assets/css/conteudos-dinamicos.css',
+        array( 'victortech-style' ),
+        filemtime( $tema_dir . '/assets/css/conteudos-dinamicos.css' )
+    );
+
+    wp_enqueue_script(
+        'victortech-plan-customizer',
+        $tema_uri . '/assets/js/plan-customizer.js',
+        array(),
+        filemtime( $tema_dir . '/assets/js/plan-customizer.js' ),
+        true
+    );
 }
 add_action( 'wp_enqueue_scripts', 'victortech_enqueue_assets' );
+
+
+/**
+ * Carrega os cadastros editáveis do painel da Fastnet.
+ */
+require_once get_template_directory() . '/inc/gerenciador-conteudo.php';
