@@ -1,0 +1,81 @@
+.fastnet-grade-campos-admin {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 18px 24px;
+    margin: 16px 0;
+}
+
+.fastnet-campo-admin {
+    min-width: 0;
+    margin: 0 0 16px;
+}
+
+.fastnet-campo-admin > label,
+.fastnet-campo-admin > strong {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.fastnet-campo-admin .description {
+    margin: 6px 0 0;
+}
+
+.fastnet-grade-precos-admin {
+    grid-template-columns: repeat(4, minmax(130px, 1fr));
+}
+
+.fastnet-campo-imagem {
+    max-width: 540px;
+    margin: 14px 0 22px;
+}
+
+.fastnet-previa-imagem {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 86px;
+    margin: 10px 0;
+    padding: 12px;
+    border: 1px dashed #c3c4c7;
+    border-radius: 6px;
+    background: #f6f7f7;
+}
+
+.fastnet-previa-imagem:empty::before {
+    color: #646970;
+    content: "Nenhuma imagem selecionada";
+    font-size: 13px;
+}
+
+.fastnet-previa-imagem img {
+    display: block;
+    max-width: 100%;
+    max-height: 170px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.fastnet-selecionar-imagem {
+    margin-right: 10px !important;
+}
+
+.fastnet-opcao-marcacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+}
+
+@media (max-width: 900px) {
+    .fastnet-grade-precos-admin {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .fastnet-grade-campos-admin,
+    .fastnet-grade-precos-admin {
+        grid-template-columns: 1fr;
+    }
+}

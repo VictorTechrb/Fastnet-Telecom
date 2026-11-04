@@ -2,43 +2,51 @@
     'use strict';
 
     document.querySelectorAll('[data-plan-card]').forEach(function (card) {
-        var basePrice = Number(card.getAttribute('data-plan-price')) || 0;
+        var precoBase = Number(card.getAttribute('data-plan-price')) || 0;
         var total = card.querySelector('[data-plan-total]');
-        var selectedOption = card.querySelector('[data-option-price].is-selected');
 
-        if (selectedOption && total) {
-            total.textContent = (basePrice + Number(selectedOption.getAttribute('data-option-price'))).toLocaleString('pt-BR', {
+        if (!total) {
+            return;
+        }
+
+        function atualizarTotal(adicional) {
+            total.textContent = (precoBase + (Number(adicional) || 0)).toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
         }
 
-        card.querySelectorAll('[data-plan-tab]').forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                var target = tab.getAttribute('data-plan-tab');
-                card.querySelectorAll('[data-plan-tab]').forEach(function (item) {
-                    var active = item === tab;
-                    item.classList.toggle('is-active', active);
-                    item.setAttribute('aria-selected', active ? 'true' : 'false');
+        var opcaoInicial = card.querySelector('[data-option-price].is-selected');
+        atualizarTotal(opcaoInicial ? opcaoInicial.getAttribute('data-option-price') : 0);
+
+        card.querySelectorAll('[data-plan-tab]').forEach(function (aba) {
+            aba.addEventListener('click', function () {
+                var destino = aba.getAttribute('data-plan-tab');
+
+                card.querySelectorAll('[data-plan-tab]').forEach(function (outraAba) {
+                    var ativa = outraAba === aba;
+                    outraAba.classList.toggle('is-active', ativa);
+                    outraAba.setAttribute('aria-selected', ativa ? 'true' : 'false');
                 });
-                card.querySelectorAll('[data-plan-panel]').forEach(function (panel) {
-                    var visible = panel.getAttribute('data-plan-panel') === target;
-                    panel.classList.toggle('is-active', visible);
-                    panel.hidden = !visible;
+
+                card.querySelectorAll('[data-plan-panel]').forEach(function (painel) {
+                    var visivel = painel.getAttribute('data-plan-panel') === destino;
+                    painel.classList.toggle('is-active', visivel);
+                    painel.hidden = !visivel;
                 });
             });
         });
 
-        card.querySelectorAll('[data-option-price]').forEach(function (option) {
-            option.addEventListener('click', function () {
-                card.querySelectorAll('[data-option-price]').forEach(function (item) {
-                    item.classList.remove('is-selected');
+        card.querySelectorAll('[data-option-price]').forEach(function (opcao) {
+            opcao.addEventListener('click', function () {
+                card.querySelectorAll('[data-option-price]').forEach(function (outraOpcao) {
+                    outraOpcao.classList.remove('is-selected');
+                    outraOpcao.setAttribute('aria-pressed', 'false');
                 });
-                option.classList.add('is-selected');
-                total.textContent = (basePrice + Number(option.getAttribute('data-option-price'))).toLocaleString('pt-BR', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
+
+                opcao.classList.add('is-selected');
+                opcao.setAttribute('aria-pressed', 'true');
+                atualizarTotal(opcao.getAttribute('data-option-price'));
             });
         });
     });
