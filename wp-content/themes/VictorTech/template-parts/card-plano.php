@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $plano_id              = get_the_ID();
 $dados                 = fastnet_obter_dados_do_conteudo( $plano_id );
 $velocidade            = isset( $dados['velocidade'] ) ? absint( $dados['velocidade'] ) : 0;
+$unidade_velocidade    = isset( $dados['unidade_velocidade'] ) && in_array( $dados['unidade_velocidade'], array( 'MEGA', 'GIGA' ), true ) ? $dados['unidade_velocidade'] : 'MEGA';
 $preco                 = isset( $dados['preco'] ) ? (float) $dados['preco'] : 0;
 $preco_formatado       = number_format_i18n( $preco, 2 );
 $beneficios            = isset( $dados['beneficios'] ) ? preg_split( '/\r\n|\r|\n/', $dados['beneficios'] ) : array();
@@ -24,17 +25,16 @@ $link_contratacao      = ! empty( $dados['link_contratacao'] ) ? $dados['link_co
     data-plan-card
     data-plan-price="<?php echo esc_attr( $preco ); ?>"
     data-plan-name="<?php echo esc_attr( get_the_title() ); ?>"
-    data-plan-speed="<?php echo esc_attr( $velocidade ); ?>">
+    data-plan-speed="<?php echo esc_attr( $velocidade ); ?>"
+    data-plan-speed-unit="<?php echo esc_attr( $unidade_velocidade ); ?>">
     <?php if ( ! empty( $dados['destaque'] ) ) : ?>
         <span class="plano-selo-destaque">Plano em destaque</span>
     <?php endif; ?>
 
-    <h3 class="plano-nome"><?php the_title(); ?></h3>
-
     <?php if ( $velocidade ) : ?>
         <p class="plano-velocidade">
             <strong><?php echo esc_html( number_format_i18n( $velocidade ) ); ?></strong>
-            <span>MEGA</span>
+            <span><?php echo esc_html( $unidade_velocidade ); ?></span>
         </p>
     <?php endif; ?>
 

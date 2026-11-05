@@ -85,6 +85,7 @@
 
                 var nomePlano = cartao.getAttribute('data-plan-name') || 'Plano Fastnet';
                 var velocidade = cartao.getAttribute('data-plan-speed') || '';
+                var unidadeVelocidade = cartao.getAttribute('data-plan-speed-unit') || 'MEGA';
                 var aplicativos = obterAplicativosSelecionados();
                 var adicional = aplicativos.reduce(function (soma, aplicativo) {
                     return soma + aplicativo.preco;
@@ -105,7 +106,7 @@
                     'Olá! Tenho interesse em contratar um plano da Fastnet Telecom.',
                     '',
                     'Plano: ' + nomePlano,
-                    velocidade ? 'Velocidade: ' + velocidade + ' Mega' : '',
+                    velocidade ? 'Velocidade: ' + velocidade + ' ' + unidadeVelocidade : '',
                     'Valor do plano: R$ ' + precoBase.toLocaleString('pt-BR', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2

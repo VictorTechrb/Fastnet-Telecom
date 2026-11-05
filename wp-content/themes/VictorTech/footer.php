@@ -19,17 +19,11 @@ $link_facebook  = '#';
 $link_instagram = '#';
 $link_whatsapp  = '' !== trim( (string) $link_whatsapp ) ? $link_whatsapp : '#';
 
-$servicos = array(
-    array( 'Internet Fibra Óptica', home_url( '/#planos' ) ),
-    array( "APP's Play Hub", '#' ),
-    array( 'Fastnet Play', '#' ),
-    array( 'Suporte Técnico', '#' ),
-    array( 'Central de Ajuda', '#' ),
-);
+
 
 $links_uteis = array(
     array( 'Velocímetro', $link_velocimetro ),
-    array( 'Segurança da Informação', '#' ),
+    array( 'Segurança da Informacão', '#' ),
     array( 'Contato', '#' ),
     array( 'Central do Assinante', $link_central_ixc ),
 );
@@ -100,16 +94,6 @@ $logo_arquivo = get_template_directory() . '/assets/images/fastbranco.webp';
                                 <span>Segunda a Sábado: 8h às 20h</span>
                             </div>
                         </li>
-                    </ul>
-                </div>
-
-                <!-- Nossos serviços -->
-                <div class="rodape-coluna">
-                    <h2 class="rodape-titulo">Nossos serviços</h2>
-                    <ul class="rodape-links">
-                        <?php foreach ( $servicos as $item ) : ?>
-                            <li><a href="<?php echo esc_url( $item[1] ); ?>"><?php echo esc_html( $item[0] ); ?></a></li>
-                        <?php endforeach; ?>
                     </ul>
                 </div>
 

@@ -199,7 +199,11 @@ function fastnet_metabox_plano( $post ) {
     wp_nonce_field( 'fastnet_salvar_dados_conteudo', 'fastnet_nonce_conteudo' );
 
     echo '<div class="fastnet-grade-campos-admin">';
-    fastnet_renderizar_campo_admin( 'velocidade', 'Velocidade (Mega)', isset( $dados['velocidade'] ) ? $dados['velocidade'] : '', 'number', 'Exemplo: 500.', array( 'step' => '1', 'min' => '1' ) );
+    fastnet_renderizar_campo_admin( 'unidade_velocidade', 'Unidade da velocidade', isset( $dados['unidade_velocidade'] ) ? $dados['unidade_velocidade'] : 'MEGA', 'select', '', array(
+        'MEGA' => 'MEGA',
+        'GIGA' => 'GIGA',
+    ) );
+    fastnet_renderizar_campo_admin( 'velocidade', 'Velocidade', isset( $dados['velocidade'] ) ? $dados['velocidade'] : '', 'number', 'Exemplo: 500.', array( 'step' => '1', 'min' => '1' ) );
     fastnet_renderizar_campo_admin( 'preco', 'Preço mensal (R$)', isset( $dados['preco'] ) ? $dados['preco'] : '', 'number', 'Informe o valor promocional mensal. Exemplo: 89,90.', array( 'step' => '0.01', 'min' => '0' ) );
     fastnet_renderizar_campo_admin( 'descricao_preco', 'Descrição abaixo do preço', isset( $dados['descricao_preco'] ) ? $dados['descricao_preco'] : '', 'text', 'Texto curto exibido logo abaixo do valor.' );
     fastnet_renderizar_campo_admin( 'beneficios', 'Benefícios do plano', isset( $dados['beneficios'] ) ? $dados['beneficios'] : '', 'textarea', 'Digite um benefício por linha.' );
@@ -303,6 +307,9 @@ function fastnet_salvar_dados_dos_conteudos( $post_id, $post, $update ) {
     $dados     = array();
 
     if ( 'plano' === $post->post_type ) {
+        $unidades_validas             = array( 'MEGA', 'GIGA' );
+        $unidade_velocidade            = isset( $recebidos['unidade_velocidade'] ) ? sanitize_text_field( $recebidos['unidade_velocidade'] ) : 'MEGA';
+        $dados['unidade_velocidade']   = in_array( $unidade_velocidade, $unidades_validas, true ) ? $unidade_velocidade : 'MEGA';
         $dados['velocidade']       = isset( $recebidos['velocidade'] ) ? absint( $recebidos['velocidade'] ) : 0;
         $dados['preco']            = isset( $recebidos['preco'] ) ? fastnet_normalizar_preco( $recebidos['preco'] ) : 0;
         $dados['descricao_preco']  = isset( $recebidos['descricao_preco'] ) ? sanitize_text_field( $recebidos['descricao_preco'] ) : '';

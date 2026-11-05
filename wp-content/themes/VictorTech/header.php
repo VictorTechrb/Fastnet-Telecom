@@ -3,10 +3,22 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MKNB2SK8');</script>
+    <!-- End Google Tag Manager -->
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKNB2SK8"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<a class="link-pular-conteudo" href="#conteudo-principal">Pular para o conteúdo principal</a>
 
 <?php
 // Dados 100% editáveis via Aparência > Personalizar (com fallback seguro)
@@ -67,8 +79,10 @@ $link_velocimetro = get_theme_mod( 'fastnet_link_velocimetro', 'https://speedixc
                 <a class="botao-pilula-assinante" href="<?php echo esc_url( $link_central_ixc ); ?>" target="_blank" rel="noopener noreferrer">
                     <?php echo esc_html( $texto_botao_ixc ); ?>
                 </a>
-                <button class="botao-menu-mobile" type="button" aria-expanded="false" aria-controls="menu-principal-fastnet">
-                    ☰
+                <button class="botao-menu-mobile" type="button" aria-expanded="false" aria-controls="menu-principal-fastnet" aria-label="Abrir menu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
         </div>

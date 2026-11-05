@@ -8,6 +8,9 @@ get_header();
 $h1_seo_home = fastnet_campo_home( 'home_h1_seo', 'Internet 100% Fibra Óptica de alta velocidade' );
 $titulo_planos = fastnet_campo_home( 'home_titulo_planos', 'Internet pensada para a sua rotina' );
 $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fibra óptica, estabilidade total e instalação rápida.' );
+$configuracoes_home = fastnet_obter_configuracoes_pagina_inicial();
+$tem_whatsapp_home = ! empty( $configuracoes_home['whatsapp_url'] );
+$link_whatsapp_home = $tem_whatsapp_home ? $configuracoes_home['whatsapp_url'] : '#planos';
 ?>
 
 <main id="conteudo-principal" class="site-principal-telecom">
@@ -73,13 +76,16 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
 
                                 <?php if (!empty($banner['titulo'])): ?>
                                     <div class="conteudo-slide">
-                                        <span class="selo-fibra-optica">100% Fibra Óptica</span>
+                                        <span class="selo-fibra-optica">Internet 100% fibra óptica</span>
                                         <h2 class="titulo-velocidade-mega"><?php echo esc_html($banner['titulo']); ?></h2>
                                         <?php if (!empty($banner['subtitulo'])): ?>
                                             <p class="descricao-chamada-fibra"><?php echo esc_html($banner['subtitulo']); ?></p>
                                         <?php endif; ?>
-                                        <a href="<?php echo esc_url($banner['link'] ? $banner['link'] : '#planos'); ?>"
-                                            class="botao-assinar-fibra"><?php echo esc_html( ! empty( $banner['texto_botao'] ) ? $banner['texto_botao'] : 'Conhecer ofertas' ); ?></a>
+                                        <div class="acoes-hero-fastnet">
+                                            <a href="<?php echo esc_url($banner['link'] ? $banner['link'] : '#planos'); ?>"
+                                                class="botao-assinar-fibra"><?php echo esc_html( ! empty( $banner['texto_botao'] ) ? $banner['texto_botao'] : 'Conhecer ofertas' ); ?></a>
+                                            <span class="nota-hero-fastnet">Instalação rápida e suporte local</span>
+                                        </div>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -90,20 +96,26 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
                     <button class="controle-carrossel controle-proximo" type="button" data-carousel-next
                         aria-label="Próximo banner">&#10095;</button>
                     <div class="indicadores-carrossel" data-carousel-dots aria-label="Navegação de banners"></div>
+                    <button class="alternar-carrossel" type="button" data-carousel-toggle aria-label="Pausar rotação de banners">
+                        <span aria-hidden="true">Pausar</span>
+                    </button>
                 <?php else: ?>
                     <div class="slide-banner-item slide-padrao-telecom">
                         <div class="conteudo-slide">
                             <div class="chamada-plano-mobile">
                                 <span class="selo-fibra-optica">Internet 100% fibra óptica</span>
-                                <h2 class="titulo-chamada-mobile">Nós temos o plano perfeito para você!</h2>
-                                <p class="descricao-chamada-mobile">Internet com estabilidade e velocidade para toda a família.</p>
+                                <h2 class="titulo-chamada-mobile">Internet que acompanha o seu ritmo.</h2>
+                                <p class="descricao-chamada-mobile">Velocidade e estabilidade para trabalhar, jogar e curtir sem interrupções.</p>
                             </div>
                             <div class="card-oferta-padrao">
-                                <span class="selo-fibra-optica">Ultravelocidade Fastnet</span>
-                                <h2 class="titulo-velocidade-mega">700 <small>MEGA</small></h2>
-                                <p class="descricao-chamada-fibra">Conexão rápida e baixa latência para desfrutar dos seus melhores momentos.</p>
+                                <span class="selo-fibra-optica">Fastnet Telecom</span>
+                                <h2 class="titulo-velocidade-mega">Sua vida pede mais conexão.</h2>
+                                <p class="descricao-chamada-fibra">Fibra de verdade, baixa latência e uma equipe perto de você para tudo fluir melhor.</p>
                             </div>
-                            <a href="#planos" class="botao-assinar-fibra">Conhecer ofertas</a>
+                            <div class="acoes-hero-fastnet">
+                                <a href="#planos" class="botao-assinar-fibra">Ver planos de internet</a>
+                                <span class="nota-hero-fastnet">Consulte disponibilidade na sua região</span>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -114,13 +126,13 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
     <section class="secao-planos-banda-larga" id="planos">
         <div class="container-central">
             <header class="cabecalho-secao">
+                <span class="rotulo-secao">Planos residenciais</span>
                 <h2 class="titulo-secao"><?php echo esc_html($titulo_planos); ?></h2>
                 <p class="subtitulo-secao"><?php echo esc_html($subtitulo_planos); ?></p>
             </header>
 
             <div class="grade-planos-telecom">
                 <?php
-                $configuracoes_home = fastnet_obter_configuracoes_pagina_inicial();
                 $aplicativos_inclusos = fastnet_obter_aplicativos_inclusos();
                 $aplicativos_adicionais = fastnet_obter_aplicativos_adicionais();
 
@@ -129,7 +141,8 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
                         'post_type'      => 'plano',
                         'post_status'    => 'publish',
                         'posts_per_page' => -1,
-                        'orderby'        => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
+                        'orderby'        => 'date',
+                        'order'          => 'ASC',
                     )
                 );
 
@@ -156,33 +169,6 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
             </div>
         </div>
     </section>
-
-    <?php get_template_part( 'template-parts/simulador', 'velocidade' ); ?>
-
-    <section class="secao-diferenciais-fibra" aria-label="Vantagens tecnológicas da Fastnet">
-        <div class="container-central grade-diferenciais">
-            <?php
-            $diferenciais = array(
-                array('⚡', 'dif_1_titulo', 'Fibra Pura FTTH', 'dif_1_texto', 'Sinal óptico direto até o roteador da sua casa sem perda.'),
-                array('📶', 'dif_2_titulo', 'Wi-Fi Dual Band', 'dif_2_texto', 'Cobertura inteligente para múltiplos dispositivos simultâneos.'),
-                array('🎮', 'dif_3_titulo', 'Ping estável', 'dif_3_texto', 'Conexão preparada para jogos, vídeos e chamadas sem travamentos.'),
-                array('🛠️', 'dif_4_titulo', 'Suporte próximo', 'dif_4_texto', 'Equipe local pronta para ajudar quando você precisar.'),
-            );
-            foreach ($diferenciais as $diferencial):
-                ?>
-                <article class="item-diferencial-telecom">
-                    <span class="icone-diferencial"><?php echo esc_html($diferencial[0]); ?></span>
-                    <div>
-                        <h2 class="titulo-diferencial">
-                            <?php echo esc_html(fastnet_campo($diferencial[1], $diferencial[2])); ?></h2>
-                        <p class="texto-diferencial">
-                            <?php echo esc_html(fastnet_campo($diferencial[3], $diferencial[4])); ?></p>
-                    </div>
-                </article>
-            <?php endforeach; ?>
-        </div>
-    </section>
-
     <?php
     $cidades_atendidas = array(
         'Aleixo',
@@ -207,24 +193,59 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
         'Santa Rosa',
     );
     ?>
-    <section class="leitor-de-tela-seo" aria-label="Cidades atendidas pela Fastnet Telecom">
-        <h2>Provedor de internet Fastnet Telecom nas cidades atendidas</h2>
-        <p>Internet fibra óptica Fastnet Telecom disponível em:</p>
-        <ul>
-            <?php foreach ($cidades_atendidas as $cidade): ?>
-                <li><?php echo esc_html($cidade); ?></li>
-            <?php endforeach; ?>
-        </ul>
+    <section class="secao-cobertura-fastnet" aria-labelledby="titulo-cobertura">
+        <div class="container-central cobertura-fastnet-layout">
+            <div class="cobertura-fastnet-conteudo">
+                <span class="rotulo-secao rotulo-secao--claro">Presença regional</span>
+                <h2 id="titulo-cobertura">A Fastnet está cada vez mais perto de você</h2>
+                <p>Conectamos cidades e comunidades de Sergipe com uma rede de fibra óptica preparada para o presente e para o futuro.</p>
+                <a class="botao-cobertura-fastnet" href="<?php echo esc_url( $link_whatsapp_home ); ?>"<?php echo $tem_whatsapp_home ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>Consultar meu endereço</a>
+            </div>
+            <div class="lista-cidades-fastnet" aria-label="Cidades e regiões atendidas">
+                <?php foreach ($cidades_atendidas as $cidade): ?>
+                    <span><?php echo esc_html($cidade); ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </section>
 
-    <script>
-    document.querySelectorAll('.faq-pergunta').forEach(item => {
-        item.addEventListener('click', () => {
-            const parent = item.parentElement;
-            parent.classList.toggle('active');
-        });
-    });
-    </script>
+    <section class="secao-faq-fastnet" aria-labelledby="titulo-faq">
+        <div class="container-central faq-fastnet-layout">
+            <header class="cabecalho-secao cabecalho-secao--esquerda">
+                <span class="rotulo-secao">Dúvidas frequentes</span>
+                <h2 class="titulo-secao" id="titulo-faq">Tudo o que você precisa saber</h2>
+                <p class="subtitulo-secao">Respostas rápidas para escolher seu plano com tranquilidade.</p>
+            </header>
+            <div class="lista-faq-fastnet">
+                <details>
+                    <summary>A internet é fibra óptica até dentro de casa?</summary>
+                    <p>Sim. A tecnologia FTTH leva a fibra até a residência, ajudando a entregar mais estabilidade e velocidade na conexão.</p>
+                </details>
+                <details>
+                    <summary>Como descubro se há cobertura no meu endereço?</summary>
+                    <p>Fale com nossa equipe pelo WhatsApp. Consultamos seu endereço e apresentamos os planos disponíveis para a sua região.</p>
+                </details>
+                <details>
+                    <summary>Qual plano é ideal para a minha casa?</summary>
+                    <p>Depende da quantidade de pessoas, dispositivos e atividades. Nossa equipe ajuda a escolher a velocidade adequada sem complicação.</p>
+                </details>
+                <details>
+                    <summary>A Fastnet oferece suporte técnico?</summary>
+                    <p>Sim. Você conta com atendimento próximo e uma equipe preparada para orientar e resolver problemas de conexão.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-final-fastnet" aria-label="Contrate internet Fastnet">
+        <div class="container-central cta-final-fastnet-conteudo">
+            <div>
+                <span>Pronto para navegar melhor?</span>
+                <h2>Leve a velocidade Fastnet para a sua casa.</h2>
+            </div>
+            <a href="<?php echo esc_url( $link_whatsapp_home ); ?>"<?php echo $tem_whatsapp_home ? ' target="_blank" rel="noopener noreferrer"' : ''; ?>>Falar com um Atendente</a>
+        </div>
+    </section>
 
 </main>
 

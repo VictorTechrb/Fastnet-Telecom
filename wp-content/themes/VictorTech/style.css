@@ -1,12 +1,14 @@
 :root {
-  --vermelho-fastnet: #e52323;
-  --vermelho-primario: #e02121;
-  --vermelho-dark: #b71c1c;
+  --vermelho-fastnet: #e3202b;
+  --vermelho-primario: #dc1f2a;
+  --vermelho-dark: #a50f1c;
+  --vermelho-suave: #fff1f2;
   --branco: #ffffff;
-  --preto-tech: #111827;
-  --texto-corpo: #4b5563;
-  --bg-suave: #f9fafb;
-  --cinza-linha: #e5e7eb;
+  --preto-tech: #15171c;
+  --texto-corpo: #5c626d;
+  --bg-suave: #f7f7f8;
+  --cinza-linha: #e7e8eb;
+  --sombra-suave: 0 18px 50px rgba(21, 23, 28, 0.09);
 }
 
 * {
@@ -15,10 +17,12 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 120px;
 }
 
 body {
   margin: 0;
+  padding-top: 120px;
   color: var(--preto-tech);
   background: var(--branco);
   font-family: "Poppins", Arial, sans-serif;
@@ -35,6 +39,32 @@ a {
   color: inherit;
 }
 
+:where(a, button, summary, input, select, textarea):focus-visible {
+  outline: 3px solid #1f6feb;
+  outline-offset: 3px;
+}
+
+.link-pular-conteudo {
+  position: fixed;
+  z-index: 9999;
+  top: 12px;
+  left: 12px;
+  padding: 11px 15px;
+  border-radius: 8px;
+  background: var(--branco);
+  color: var(--preto-tech);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.25);
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+
+.link-pular-conteudo:focus {
+  transform: translateY(0);
+}
+
 .leitor-de-tela-seo {
   position: absolute;
   width: 1px;
@@ -48,8 +78,10 @@ a {
 }
 
 .cabecalho-fastnet {
-  position: relative;
-  z-index: 20;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  width: 100%;
   color: var(--branco);
 }
 
@@ -151,7 +183,7 @@ a {
   justify-content: center;
   min-height: 42px;
   padding: 0 20px;
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--branco);
   color: var(--vermelho-dark);
   font-size: 0.82rem;
@@ -170,13 +202,38 @@ a {
 
 .botao-menu-mobile {
   display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 8px;
-  padding: 7px 10px;
+  padding: 8px;
   background: transparent;
   color: var(--branco);
-  font-size: 1.2rem;
-  line-height: 1;
+}
+
+.botao-menu-mobile span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.botao-menu-mobile[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.botao-menu-mobile[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.botao-menu-mobile[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 .secao-hero-fibra {
@@ -190,7 +247,7 @@ a {
 
 .container-carrossel {
   position: relative;
-  min-height: 430px;
+  min-height: 560px;
   overflow: hidden;
   background:
     radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.2), transparent 28%),
@@ -200,14 +257,14 @@ a {
 .lista-slides {
   display: flex;
   height: 100%;
-  min-height: 430px;
+  min-height: 560px;
   transition: transform 450ms ease;
 }
 
 .slide-banner-item {
   position: relative;
   flex: 0 0 100%;
-  min-height: 430px;
+  min-height: 560px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -216,21 +273,25 @@ a {
 .slide-banner-item::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(17, 24, 39, 0.62), rgba(17, 24, 39, 0.05) 72%);
+  background: linear-gradient(90deg, rgba(15, 17, 22, 0.86) 0%, rgba(15, 17, 22, 0.54) 48%, rgba(15, 17, 22, 0.08) 78%);
   content: "";
 }
 
 .slide-padrao-telecom {
   padding: 48px max(40px, calc((100% - 1180px) / 2));
+  background:
+    linear-gradient(90deg, rgba(18, 19, 24, 0.92) 0%, rgba(18, 19, 24, 0.7) 45%, rgba(18, 19, 24, 0.18) 78%),
+    url("https://images.unsplash.com/photo-1523939158338-1708c2391359?auto=format&fit=crop&w=1920&q=88") center 45% / cover no-repeat;
 }
 
 .slide-padrao-telecom::before {
   position: absolute;
-  right: 8%;
-  width: 360px;
-  height: 360px;
-  border: 38px solid rgba(255, 255, 255, 0.13);
-  border-radius: 50%;
+  top: 0;
+  right: 0;
+  width: 42%;
+  height: 100%;
+  border: 0;
+  background: linear-gradient(140deg, transparent, rgba(227, 32, 43, 0.25));
   content: "";
 }
 
@@ -257,7 +318,11 @@ a {
 .selo-fibra-optica {
   display: inline-block;
   margin-bottom: 12px;
-  color: #ffe2dc;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -265,18 +330,37 @@ a {
 }
 
 .titulo-velocidade-mega {
-  max-width: 680px;
+  max-width: 720px;
   margin: 0;
-  font-size: clamp(2.4rem, 6vw, 5rem);
-  line-height: 1;
-  letter-spacing: -0.05em;
+  font-size: clamp(2.55rem, 5.2vw, 4.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
 }
 
 .descricao-chamada-fibra {
   max-width: 540px;
   margin: 20px 0 28px;
-  color: #fff4f1;
+  color: rgba(255, 255, 255, 0.82);
   font-size: clamp(1rem, 2vw, 1.2rem);
+}
+
+.acoes-hero-fastnet {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.acoes-hero-fastnet .botao-assinar-fibra {
+  min-height: 50px;
+  padding: 0 24px;
+  background: var(--vermelho-fastnet);
+  color: var(--branco);
+  font-size: 0.88rem;
+}
+
+.nota-hero-fastnet {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.76rem;
 }
 
 .controle-carrossel {
@@ -317,18 +401,48 @@ a {
 }
 
 .indicador-carrossel {
-  width: 9px;
-  height: 9px;
+  position: relative;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
 }
 
-.indicador-carrossel.is-active {
+.indicador-carrossel::before {
+  position: absolute;
+  inset: 11px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  content: "";
+}
+
+.indicador-carrossel.is-active::before {
+  inset: 9px;
   background: var(--branco);
-  transform: scale(1.25);
+}
+
+.alternar-carrossel {
+  position: absolute;
+  z-index: 4;
+  right: max(20px, calc((100% - 1180px) / 2));
+  bottom: 18px;
+  min-width: 72px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 7px;
+  background: rgba(17, 24, 39, 0.42);
+  color: var(--branco);
+  cursor: pointer;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.alternar-carrossel:hover {
+  background: rgba(17, 24, 39, 0.72);
 }
 
 .secao-planos-banda-larga,
@@ -349,7 +463,9 @@ a {
 
 .titulo-secao {
   margin: 0 0 10px;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
 }
 
 .subtitulo-secao {
@@ -364,16 +480,34 @@ a {
 }
 
 .item-diferencial-telecom {
-  padding: 22px;
+  padding: 28px 24px;
   border: 1px solid var(--cinza-linha);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--branco);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.item-diferencial-telecom:hover {
+  border-color: rgba(227, 32, 43, 0.25);
+  box-shadow: var(--sombra-suave);
+  transform: translateY(-4px);
 }
 
 .icone-diferencial {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 1.8rem;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  background: var(--vermelho-suave);
+  color: var(--vermelho-fastnet);
+}
+
+.icone-diferencial svg {
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
 }
 
 .titulo-diferencial {
@@ -396,6 +530,10 @@ a {
 }
 
 @media (max-width: 900px) {
+  body.menu-mobile-aberto {
+    padding-top: 340px;
+  }
+
   .navegacao-fastnet {
     order: 3;
     width: 100%;
@@ -407,7 +545,7 @@ a {
   }
 
   .botao-menu-mobile {
-    display: block;
+    display: flex;
   }
 
   .navegacao-fastnet:not(.is-open) {
@@ -427,21 +565,6 @@ a {
 }
 
 @media (max-width: 767px) {
-  body {
-    padding-top: 120px;
-  }
-
-  body.menu-mobile-aberto {
-    padding-top: 340px;
-  }
-
-  .cabecalho-fastnet {
-    position: fixed;
-    inset: 0 0 auto;
-    z-index: 1000;
-    width: 100%;
-  }
-
   .barra-principal-fastnet .container-cabecalho {
     min-height: 78px;
   }
@@ -462,11 +585,15 @@ a {
   }
 
   body {
-    padding-top: 48px;
+    padding-top: 64px;
+  }
+
+  html {
+    scroll-padding-top: 64px;
   }
 
   body.menu-mobile-aberto {
-    padding-top: 220px;
+    padding-top: 236px;
   }
 
   .barra-superior-fastnet {
@@ -476,11 +603,11 @@ a {
   .barra-principal-fastnet .container-cabecalho {
     position: relative;
     width: calc(100% - 20px);
-    min-height: 48px;
+    min-height: 64px;
     flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 8px;
-    padding: 5px 0;
+    padding: 8px 0;
   }
 
   .marca-fastnet {
@@ -489,10 +616,14 @@ a {
     margin: 0 0 0 4px;
   }
 
-  .logo-fastnet {
-    width: clamp(104px, 31vw, 138px);
+  .logo-fastnet,
+  .marca-fastnet .custom-logo {
+    display: block;
+    width: clamp(104px, 38vw, 154px);
     height: auto;
-    max-height: 32px;
+    max-width: 154px;
+    max-height: 42px;
+    object-fit: contain;
   }
 
   .navegacao-fastnet {
@@ -501,7 +632,7 @@ a {
     left: 0;
     order: 1;
     width: 100%;
-    max-height: calc(100vh - 48px);
+    max-height: calc(100vh - 64px);
     padding: 0 14px;
     overflow-y: auto;
     background: var(--vermelho-fastnet);
@@ -529,7 +660,7 @@ a {
 
   .acoes-direita-cabecalho {
     position: absolute;
-    top: 9px;
+    top: 10px;
     right: 0;
     order: 3;
     flex: 0 0 auto;
@@ -541,20 +672,18 @@ a {
   }
 
   .botao-pilula-assinante {
-    min-height: 30px;
-    padding: 0 9px;
-    font-size: 0.58rem;
+    min-height: 40px;
+    padding: 0 10px;
+    font-size: 0.65rem;
     white-space: nowrap;
   }
 
   .botao-menu-mobile {
-    display: block;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border: 0;
-    font-size: 1rem;
-    line-height: 30px;
+    display: flex;
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
   }
 
   .contatos-cabecalho {
@@ -644,6 +773,18 @@ a {
     width: 100%;
     color: var(--preto-tech);
     text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo-fastnet,
+  .marca-fastnet .custom-logo {
+    width: 104px;
+  }
+
+  .botao-pilula-assinante {
+    padding: 0 7px;
+    font-size: 0.56rem;
   }
 
   .chamada-plano-mobile {
@@ -979,4 +1120,448 @@ a {
 .rodape-contatos span,
 .rodape-links a {
   overflow-wrap: anywhere;
+}
+
+/* Home Fastnet */
+.rotulo-secao {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: var(--vermelho-fastnet);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rotulo-secao--claro {
+  color: #ffb8bd;
+}
+
+.cabecalho-secao--esquerda {
+  max-width: 650px;
+  margin-right: 0;
+  margin-left: 0;
+  text-align: left;
+}
+
+.faixa-confianca-fastnet {
+  position: relative;
+  z-index: 5;
+  border-bottom: 1px solid var(--cinza-linha);
+  background: var(--branco);
+}
+
+.grade-confianca-fastnet {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0 20px;
+}
+
+.item-confianca-fastnet {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+  padding: 24px 20px;
+  border-right: 1px solid var(--cinza-linha);
+}
+
+.item-confianca-fastnet:first-child {
+  border-left: 1px solid var(--cinza-linha);
+}
+
+.item-confianca-fastnet svg {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  fill: var(--vermelho-fastnet);
+}
+
+.item-confianca-fastnet strong,
+.item-confianca-fastnet span {
+  display: block;
+}
+
+.item-confianca-fastnet strong {
+  margin-bottom: 3px;
+  font-size: 0.82rem;
+}
+
+.item-confianca-fastnet span {
+  color: var(--texto-corpo);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.secao-planos-banda-larga {
+  padding-top: 92px;
+  padding-bottom: 92px;
+}
+
+.nota-planos-fastnet {
+  max-width: 760px;
+  margin: 24px auto 0;
+  color: #747983;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.secao-diferenciais-fibra {
+  padding-top: 92px;
+  padding-bottom: 100px;
+  background:
+    radial-gradient(circle at 95% 5%, rgba(227, 32, 43, 0.07), transparent 25%),
+    var(--branco);
+}
+
+.secao-diferenciais-fibra .cabecalho-secao {
+  margin-bottom: 42px;
+}
+
+.secao-cobertura-fastnet {
+  padding: 96px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 100% 0, rgba(227, 32, 43, 0.32), transparent 28%),
+    linear-gradient(120deg, #13161d 0%, #252a35 100%);
+  color: var(--branco);
+}
+
+.cobertura-fastnet-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: 72px;
+}
+
+.cobertura-fastnet-conteudo h2 {
+  max-width: 520px;
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.cobertura-fastnet-conteudo p {
+  max-width: 510px;
+  margin: 22px 0 30px;
+  color: #b9c0cd;
+}
+
+.botao-cobertura-fastnet,
+.cta-final-fastnet a {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 22px;
+  border-radius: 10px;
+  background: var(--vermelho-fastnet);
+  color: var(--branco);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.botao-cobertura-fastnet:hover,
+.botao-cobertura-fastnet:focus-visible,
+.cta-final-fastnet a:hover,
+.cta-final-fastnet a:focus-visible {
+  background: #f0323c;
+  transform: translateY(-2px);
+}
+
+.lista-cidades-fastnet {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lista-cidades-fastnet span {
+  position: relative;
+  padding: 13px 12px 13px 29px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e7e9ee;
+  font-size: 0.72rem;
+}
+
+.lista-cidades-fastnet span::before {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vermelho-fastnet);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.secao-faq-fastnet {
+  padding: 96px 20px;
+  background: var(--bg-suave);
+}
+
+.faq-fastnet-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 80px;
+  align-items: start;
+}
+
+.lista-faq-fastnet {
+  border-top: 1px solid #d9dbe0;
+}
+
+.lista-faq-fastnet details {
+  border-bottom: 1px solid #d9dbe0;
+}
+
+.lista-faq-fastnet summary {
+  position: relative;
+  padding: 23px 48px 23px 0;
+  cursor: pointer;
+  font-size: 0.94rem;
+  font-weight: 700;
+  list-style: none;
+}
+
+.lista-faq-fastnet summary::-webkit-details-marker {
+  display: none;
+}
+
+.lista-faq-fastnet summary::after {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  color: var(--vermelho-fastnet);
+  content: "+";
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.lista-faq-fastnet details[open] summary::after {
+  content: "−";
+}
+
+.lista-faq-fastnet p {
+  max-width: 680px;
+  margin: -6px 48px 24px 0;
+  color: var(--texto-corpo);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+.cta-final-fastnet {
+  padding: 0 20px 96px;
+  background: var(--bg-suave);
+}
+
+.cta-final-fastnet-conteudo {
+  display: flex;
+  min-height: 210px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 44px 52px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 86% 30%, rgba(255, 255, 255, 0.16), transparent 24%),
+    linear-gradient(120deg, #be1521, var(--vermelho-fastnet));
+  color: var(--branco);
+  box-shadow: 0 20px 55px rgba(165, 15, 28, 0.2);
+}
+
+.cta-final-fastnet span {
+  display: block;
+  margin-bottom: 8px;
+  color: #ffdadd;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cta-final-fastnet h2 {
+  max-width: 700px;
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.65rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.cta-final-fastnet a {
+  flex: 0 0 auto;
+  background: var(--branco);
+  color: var(--vermelho-dark);
+}
+
+.cta-final-fastnet a:hover,
+.cta-final-fastnet a:focus-visible {
+  background: #fff5f5;
+}
+
+@media (max-width: 960px) {
+  .grade-confianca-fastnet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .item-confianca-fastnet {
+    border-bottom: 1px solid var(--cinza-linha);
+  }
+
+  .cobertura-fastnet-layout,
+  .faq-fastnet-layout {
+    grid-template-columns: 1fr;
+    gap: 46px;
+  }
+
+  .lista-cidades-fastnet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .container-carrossel,
+  .lista-slides,
+  .slide-banner-item {
+    min-height: 500px;
+  }
+
+  .container-carrossel {
+    padding-top: 0;
+    overflow: hidden;
+  }
+
+  .container-carrossel::before {
+    display: none;
+  }
+
+  .slide-padrao-telecom {
+    display: flex;
+    padding: 44px 24px;
+    background:
+      linear-gradient(90deg, rgba(18, 19, 24, 0.92), rgba(18, 19, 24, 0.58)),
+      url("https://images.unsplash.com/photo-1523939158338-1708c2391359?auto=format&fit=crop&w=900&q=84") 58% center / cover no-repeat;
+  }
+
+  .slide-padrao-telecom .conteudo-slide {
+    width: 100%;
+    color: var(--branco);
+    text-align: left;
+  }
+
+  .chamada-plano-mobile {
+    display: none;
+  }
+
+  .card-oferta-padrao {
+    display: block;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .card-oferta-padrao .selo-fibra-optica {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 0.65rem;
+  }
+
+  .card-oferta-padrao .titulo-velocidade-mega {
+    color: var(--branco);
+    font-size: clamp(2.4rem, 12vw, 3.5rem);
+    line-height: 1.02;
+  }
+
+  .card-oferta-padrao .descricao-chamada-fibra {
+    max-width: 440px;
+    margin: 18px 0 25px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.88rem;
+  }
+
+  .slide-padrao-telecom .botao-assinar-fibra {
+    min-height: 46px;
+    padding: 0 18px;
+    background: var(--vermelho-fastnet);
+    color: var(--branco);
+    font-size: 0.75rem;
+  }
+
+  .acoes-hero-fastnet {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .controle-carrossel {
+    display: none;
+  }
+
+  .alternar-carrossel {
+    right: 14px;
+    bottom: 14px;
+    min-height: 44px;
+  }
+
+  .grade-confianca-fastnet {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .item-confianca-fastnet,
+  .item-confianca-fastnet:first-child {
+    padding: 19px 4px;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .secao-planos-banda-larga,
+  .secao-diferenciais-fibra,
+  .secao-cobertura-fastnet,
+  .secao-faq-fastnet {
+    padding-top: 68px;
+    padding-bottom: 68px;
+  }
+
+  .lista-cidades-fastnet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cta-final-fastnet {
+    padding-bottom: 68px;
+  }
+
+  .cta-final-fastnet-conteudo {
+    min-height: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 34px 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .item-diferencial-telecom,
+  .botao-cobertura-fastnet,
+  .cta-final-fastnet a,
+  .link-pular-conteudo,
+  .botao-menu-mobile span {
+    transition: none;
+  }
 }
