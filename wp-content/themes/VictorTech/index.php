@@ -122,7 +122,7 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
                 <?php
                 $configuracoes_home = fastnet_obter_configuracoes_pagina_inicial();
                 $aplicativos_inclusos = fastnet_obter_aplicativos_inclusos();
-                $apps_por_categoria = fastnet_obter_aplicativos_por_categoria();
+                $aplicativos_adicionais = fastnet_obter_aplicativos_adicionais();
 
                 $query_planos = new WP_Query(
                     array(
@@ -141,7 +141,7 @@ $subtitulo_planos = fastnet_campo_home( 'home_subtitulo_planos', 'Planos 100% fi
                             'plano',
                             array(
                                 'aplicativos_inclusos' => $aplicativos_inclusos,
-                                'apps_por_categoria'   => $apps_por_categoria,
+                                'aplicativos_adicionais' => $aplicativos_adicionais,
                                 'configuracoes'        => $configuracoes_home,
                             )
                         );

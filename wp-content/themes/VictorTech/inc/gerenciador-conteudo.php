@@ -458,6 +458,13 @@ function fastnet_campo_home( $nome_campo, $padrao = '' ) {
 }
 
 /**
+ * Alias para textos editáveis usados em componentes da página inicial.
+ */
+function fastnet_campo( $nome_campo, $padrao = '' ) {
+    return fastnet_campo_home( $nome_campo, $padrao );
+}
+
+/**
  * Retorna os banners cadastrados no painel em ordem de exibição.
  */
 function fastnet_obter_banners() {
@@ -535,6 +542,46 @@ function fastnet_obter_aplicativos_por_categoria() {
     }
 
     return $categorias;
+}
+
+/**
+ * Retorna cada aplicativo adicional uma única vez para a lista dos planos.
+ */
+function fastnet_obter_aplicativos_adicionais() {
+    $aplicativos = array();
+    $publicacoes = get_posts( array(
+        'post_type'      => 'aplicativo',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
+    ) );
+
+    foreach ( $publicacoes as $publicacao ) {
+        $dados  = fastnet_obter_dados_do_conteudo( $publicacao->ID );
+        $precos = array_filter(
+            array(
+                isset( $dados['preco_padrao'] ) ? (float) $dados['preco_padrao'] : 0,
+                isset( $dados['preco_avancado'] ) ? (float) $dados['preco_avancado'] : 0,
+                isset( $dados['preco_top'] ) ? (float) $dados['preco_top'] : 0,
+                isset( $dados['preco_premium'] ) ? (float) $dados['preco_premium'] : 0,
+            ),
+            function ( $preco ) {
+                return $preco > 0;
+            }
+        );
+
+        if ( empty( $precos ) ) {
+            continue;
+        }
+
+        $aplicativos[] = array(
+            'nome'      => get_the_title( $publicacao->ID ),
+            'preco'     => min( $precos ),
+            'imagem_id' => get_post_thumbnail_id( $publicacao->ID ),
+        );
+    }
+
+    return $aplicativos;
 }
 
 /**

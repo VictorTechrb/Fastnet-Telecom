@@ -17,7 +17,7 @@
 }
 
 .cartao-plano-fastnet--destaque {
-    border: 2px solid var(--vermelho-fastnet, #e52323);
+    border: 2px solid var(--vermelho-primario #e02121);
     box-shadow: 0 16px 36px rgba(229, 35, 35, .12);
 }
 
@@ -26,7 +26,7 @@
     margin: -9px 0 12px;
     padding: 5px 11px;
     border-radius: 999px;
-    background: var(--vermelho-fastnet, #e52323);
+    background: var(--vermelho-primario #e02121);
     color: #fff;
     font-size: .72rem;
     font-weight: 700;
@@ -382,6 +382,206 @@
     background: #fff;
     color: var(--preto-tech, #111827);
     font-size: .88rem;
+}
+
+.secao-planos-banda-larga {
+    background: #f5f6f8;
+}
+
+.grade-planos-telecom {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.cartao-plano-fastnet {
+    padding: 14px 10px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--vermelho-fastnet, #e52323);
+    box-shadow: 0 8px 15px rgba(17, 24, 39, .2);
+    color: #fff;
+}
+
+.cartao-plano-fastnet--destaque {
+    border: 0;
+    box-shadow: 0 8px 18px rgba(78, 32, 112, .3);
+}
+
+.plano-selo-destaque {
+    margin: -4px 0 6px;
+    padding: 3px 7px;
+    background: #20b765;
+    font-size: .55rem;
+}
+
+.plano-nome {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.plano-velocidade {
+    display: block;
+    margin: 0;
+    color: #fff;
+    text-align: center;
+}
+
+.plano-velocidade strong {
+    display: block;
+    font-size: clamp(2rem, 5vw, 2.45rem);
+    letter-spacing: -1px;
+}
+
+.plano-velocidade span {
+    display: block;
+    margin-top: -3px;
+    font-size: .75rem;
+}
+
+.plano-preco {
+    justify-content: center;
+    gap: 2px;
+    margin: 4px 0 0;
+    color: #fff;
+}
+
+.plano-preco strong {
+    font-size: 1.15rem;
+}
+
+.plano-preco small,
+.plano-preco span {
+    color: #fff;
+    font-size: .58rem;
+}
+
+.plano-descricao-preco {
+    min-height: 18px;
+    margin: 2px 0 8px;
+    color: #f1eafa;
+    font-size: .45rem;
+    text-align: center;
+}
+
+.plano-beneficios {
+    display: none;
+}
+
+.plano-inclusos {
+    margin: 10px 0 12px;
+}
+
+.plano-inclusos h4,
+.plano-personalizador h4 {
+    margin: 0 0 7px;
+    color: #fff;
+    font-size: .6rem;
+}
+
+.grade-aplicativos-inclusos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.icone-aplicativo-incluso {
+    min-height: 31px;
+    padding: 3px;
+    border: 0;
+    border-radius: 4px;
+}
+
+.icone-aplicativo-incluso img {
+    height: 25px;
+}
+
+.icone-aplicativo-incluso span {
+    width: 23px;
+    height: 23px;
+    font-size: .7rem;
+}
+
+.plano-personalizador {
+    margin-top: 0;
+    padding-top: 10px;
+    border-top-color: rgba(255, 255, 255, .25);
+}
+
+.lista-opcoes-aplicativos {
+    gap: 4px;
+}
+
+.opcao-aplicativo {
+    min-height: 25px;
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 3px;
+    background: #fff;
+    font-size: .56rem;
+}
+
+.opcao-aplicativo-nome {
+    gap: 4px;
+}
+
+.opcao-aplicativo-nome img {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+}
+
+.opcao-aplicativo-preco {
+    color: (fastnet-vermelho, #e52323);
+    font-size: .52rem;
+}
+
+.opcao-aplicativo.is-selected {
+    background: #d9f7e7;
+}
+
+.plano-total {
+    margin: 8px 0;
+    padding-top: 7px;
+    border-top-color: rgba(255, 255, 255, .25);
+    color: #fff;
+    font-size: .56rem;
+}
+
+.plano-total strong {
+    color: #20d477;
+    font-size: .68rem;
+}
+
+.plano-botao-contratar {
+    min-height: 27px;
+    padding: 6px 8px;
+    background: #20b765;
+    font-size: .55rem;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .grade-planos-telecom {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .cartao-plano-fastnet {
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+}
+
+@media (max-width: 420px) {
+    .grade-planos-telecom {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+    }
 }
 
 .pagina-aplicativo-fastnet-links {
