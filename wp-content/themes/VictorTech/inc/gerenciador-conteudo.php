@@ -83,6 +83,7 @@ function fastnet_registrar_tipos_de_conteudo() {
             'menu_position'      => $configuracao['posicao'],
             'hierarchical'       => false,
             'map_meta_cap'       => true,
+            'capability_type'    => 'post',
         );
 
         register_post_type( $slug, $argumentos );
@@ -94,12 +95,12 @@ add_action( 'init', 'fastnet_registrar_tipos_de_conteudo' );
  * Atualiza as rotas uma única vez após a instalação dos novos tipos de conteúdo.
  */
 function fastnet_atualizar_regras_de_reescrita() {
-    if ( '1' === get_option( 'fastnet_gerenciador_regras_versao' ) ) {
+    if ( '2' === get_option( 'fastnet_gerenciador_regras_versao' ) ) {
         return;
     }
 
     flush_rewrite_rules( false );
-    update_option( 'fastnet_gerenciador_regras_versao', '1' );
+    update_option( 'fastnet_gerenciador_regras_versao', '2' );
 }
 add_action( 'init', 'fastnet_atualizar_regras_de_reescrita', 99 );
 
@@ -180,6 +181,58 @@ function fastnet_renderizar_campo_imagem_admin( $dados, $rotulo, $instrucoes = '
             if ( $imagem_id ) {
                 echo wp_get_attachment_image( $imagem_id, 'medium', false, array( 'alt' => '' ) );
             }
+
+            /**
+             * Renderiza uma etapa editável do tutorial de ativação.
+             */
+            function fastnet_renderizar_etapa_admin( $indice, $etapa = array() ) {
+                $indice_admin = is_numeric( $indice ) ? absint( $indice ) : '__INDICE__';
+                $titulo      = isset( $etapa['titulo'] ) ? $etapa['titulo'] : '';
+                $descricao   = isset( $etapa['descricao'] ) ? $etapa['descricao'] : '';
+                $imagem_id   = isset( $etapa['imagem_id'] ) ? absint( $etapa['imagem_id'] ) : 0;
+                $link        = isset( $etapa['link'] ) ? $etapa['link'] : '';
+                $link_texto  = isset( $etapa['link_texto'] ) ? $etapa['link_texto'] : '';
+                $prefixo     = 'fastnet_dados[etapas][' . $indice_admin . ']';
+                ?>
+                <article class="fastnet-etapa-admin" data-etapa>
+                    <div class="fastnet-etapa-admin-cabecalho">
+                        <strong>Etapa <span data-etapa-numero><?php echo esc_html( is_numeric( $indice ) ? absint( $indice ) + 1 : 1 ); ?></span></strong>
+                        <button type="button" class="button-link-delete fastnet-remover-etapa">Excluir etapa</button>
+                    </div>
+                    <div class="fastnet-grade-campos-admin">
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-titulo' ); ?>"><strong>Título da etapa</strong></label>
+                            <input class="widefat" type="text" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-titulo' ); ?>" name="<?php echo esc_attr( $prefixo . '[titulo]' ); ?>" value="<?php echo esc_attr( $titulo ); ?>">
+                        </div>
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-descricao' ); ?>"><strong>Descrição</strong></label>
+                            <textarea class="widefat" rows="3" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-descricao' ); ?>" name="<?php echo esc_attr( $prefixo . '[descricao]' ); ?>"><?php echo esc_textarea( $descricao ); ?></textarea>
+                        </div>
+                    </div>
+                    <div class="fastnet-campo-admin fastnet-campo-imagem">
+                        <strong>Imagem ilustrativa</strong>
+                        <input type="hidden" name="<?php echo esc_attr( $prefixo . '[imagem_id]' ); ?>" value="<?php echo esc_attr( $imagem_id ); ?>">
+                        <div class="fastnet-previa-imagem">
+                            <?php if ( $imagem_id ) : ?>
+                                <?php echo wp_get_attachment_image( $imagem_id, 'medium', false, array( 'alt' => '' ) ); ?>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="button fastnet-selecionar-imagem" data-titulo="Selecionar imagem da etapa">Selecionar imagem</button>
+                        <button type="button" class="button-link-delete fastnet-remover-imagem" <?php echo $imagem_id ? '' : 'hidden'; ?>>Remover imagem</button>
+                    </div>
+                    <div class="fastnet-grade-campos-admin">
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link' ); ?>"><strong>Link opcional</strong></label>
+                            <input class="widefat" type="url" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link' ); ?>" name="<?php echo esc_attr( $prefixo . '[link]' ); ?>" value="<?php echo esc_attr( $link ); ?>">
+                        </div>
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link-texto' ); ?>"><strong>Texto do link</strong></label>
+                            <input class="widefat" type="text" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link-texto' ); ?>" name="<?php echo esc_attr( $prefixo . '[link_texto]' ); ?>" value="<?php echo esc_attr( $link_texto ); ?>">
+                        </div>
+                    </div>
+                </article>
+                <?php
+            }
             ?>
         </div>
         <button type="button" class="button fastnet-selecionar-imagem" data-titulo="<?php echo esc_attr( $rotulo ); ?>">Selecionar imagem</button>
@@ -239,6 +292,25 @@ function fastnet_metabox_aplicativo( $post ) {
     fastnet_renderizar_campo_admin( 'link_app_store', 'Link da App Store', isset( $dados['link_app_store'] ) ? $dados['link_app_store'] : '', 'url' );
     fastnet_renderizar_campo_admin( 'preco_adicional', 'Preço mensal adicional (R$)', isset( $dados['preco_adicional'] ) ? $dados['preco_adicional'] : '', 'number', 'Informe o valor cobrado para adicionar este aplicativo ao plano.', array( 'step' => '0.01', 'min' => '0' ) );
     echo '</div>';
+
+    echo '<hr><h3>Passo a passo de ativação</h3>';
+    fastnet_renderizar_campo_admin( 'titulo_tutorial', 'Título do tutorial', isset( $dados['titulo_tutorial'] ) ? $dados['titulo_tutorial'] : '', 'text', 'Exemplo: Como ativar o aplicativo.' );
+    echo '<div class="fastnet-etapas-admin" data-etapas-container>';
+    $etapas = isset( $dados['etapas'] ) && is_array( $dados['etapas'] ) ? array_values( $dados['etapas'] ) : array();
+    foreach ( $etapas as $indice => $etapa ) {
+        fastnet_renderizar_etapa_admin( $indice, is_array( $etapa ) ? $etapa : array() );
+    }
+    echo '</div>';
+    echo '<button type="button" class="button button-secondary fastnet-adicionar-etapa" data-etapa-template="' . esc_attr( base64_encode( fastnet_capturar_etapa_admin_template() ) ) . '">Adicionar etapa</button>';
+}
+
+/**
+ * Gera o modelo usado pelo editor de etapas no painel.
+ */
+function fastnet_capturar_etapa_admin_template() {
+    ob_start();
+    fastnet_renderizar_etapa_admin( '__INDICE__' );
+    return ob_get_clean();
 }
 
 /**
@@ -322,6 +394,33 @@ function fastnet_salvar_dados_dos_conteudos( $post_id, $post, $update ) {
         $dados['link_play_store'] = isset( $recebidos['link_play_store'] ) ? esc_url_raw( $recebidos['link_play_store'] ) : '';
         $dados['link_app_store'] = isset( $recebidos['link_app_store'] ) ? esc_url_raw( $recebidos['link_app_store'] ) : '';
         $dados['preco_adicional'] = isset( $recebidos['preco_adicional'] ) ? fastnet_normalizar_preco( $recebidos['preco_adicional'] ) : 0;
+        $dados['titulo_tutorial'] = isset( $recebidos['titulo_tutorial'] ) ? sanitize_text_field( $recebidos['titulo_tutorial'] ) : '';
+        $dados['etapas'] = array();
+        if ( isset( $recebidos['etapas'] ) && is_array( $recebidos['etapas'] ) ) {
+            foreach ( $recebidos['etapas'] as $etapa ) {
+                if ( ! is_array( $etapa ) ) {
+                    continue;
+                }
+
+                $imagem_id = isset( $etapa['imagem_id'] ) ? absint( $etapa['imagem_id'] ) : 0;
+                $titulo    = isset( $etapa['titulo'] ) ? sanitize_text_field( $etapa['titulo'] ) : '';
+                $descricao = isset( $etapa['descricao'] ) ? sanitize_textarea_field( $etapa['descricao'] ) : '';
+                $link      = isset( $etapa['link'] ) ? esc_url_raw( $etapa['link'] ) : '';
+                $link_texto = isset( $etapa['link_texto'] ) ? sanitize_text_field( $etapa['link_texto'] ) : '';
+
+                if ( '' === $titulo && '' === $descricao && ! $imagem_id && '' === $link ) {
+                    continue;
+                }
+
+                $dados['etapas'][] = array(
+                    'titulo'     => $titulo,
+                    'descricao'  => $descricao,
+                    'imagem_id'  => $imagem_id && wp_attachment_is_image( $imagem_id ) ? $imagem_id : 0,
+                    'link'       => $link,
+                    'link_texto' => $link_texto,
+                );
+            }
+        }
     } elseif ( 'aplicativo_incluso' === $post->post_type ) {
         $imagem_id = isset( $recebidos['imagem_id'] ) ? absint( $recebidos['imagem_id'] ) : 0;
         $dados['imagem_id'] = $imagem_id && wp_attachment_is_image( $imagem_id ) ? $imagem_id : 0;
