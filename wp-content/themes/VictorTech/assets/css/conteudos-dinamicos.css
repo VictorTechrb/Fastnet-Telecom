@@ -732,7 +732,7 @@
     .cartao-plano-fastnet--destaque {
         width: 100%;
         min-width: 0;
-        padding: 64px 28px 22px;
+        padding: 22px 28px;
         border-radius: 20px;
         transform: none;
     }
@@ -744,8 +744,8 @@
 
     .plano-selo-destaque {
         top: 20px;
-        right: 26px;
-        left: 26px;
+        right: 20px;
+        left: 20px;
     }
 
     .plano-velocidade strong {
@@ -855,12 +855,13 @@
     margin: 0;
     padding: 7px 10px;
     border: 1px solid rgba(255, 255, 255, .18);
-    border-radius: 999px;
+    border-radius: 10px;
     background: var(--vermelho-fastnet, #e3202b);
     color: #fff;
     font-size: .61rem;
     font-weight: 800;
-    letter-spacing: .06em;
+    letter-spacing: .09em;
+    text-align: center;
     text-transform: uppercase;
 }
 
@@ -1157,6 +1158,22 @@
     .cartao-plano-fastnet {
         padding: 30px 22px 22px;
         border-radius: 18px;
+    }
+
+    .cartao-plano-fastnet--destaque {
+        padding-top: 58px;
+    }
+
+    .plano-selo-destaque {
+        top: 14px;
+        right: 14px;
+        left: 14px;
+        padding: 6px 8px;
+        font-size: .58rem;
+    }
+
+    .cartao-plano-fastnet--destaque .plano-nome {
+        padding-right: 0;
     }
 
     .plano-velocidade strong {
