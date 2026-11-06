@@ -58,6 +58,16 @@ function victortech_enqueue_assets() {
         filemtime( $tema_dir . '/assets/js/plan-customizer.js' ),
         true
     );
+
+    if ( is_post_type_archive( 'aplicativo' ) ) {
+        wp_enqueue_script(
+            'victortech-catalogo-aplicativos',
+            $tema_uri . '/assets/js/catalogo-aplicativos.js',
+            array(),
+            filemtime( $tema_dir . '/assets/js/catalogo-aplicativos.js' ),
+            true
+        );
+    }
 }
 add_action( 'wp_enqueue_scripts', 'victortech_enqueue_assets' );
 
@@ -66,3 +76,4 @@ add_action( 'wp_enqueue_scripts', 'victortech_enqueue_assets' );
  * Carrega os cadastros editáveis do painel da Fastnet.
  */
 require_once get_template_directory() . '/inc/gerenciador-conteudo.php';
+require_once get_template_directory() . '/inc/integracao-chat-opa.php';

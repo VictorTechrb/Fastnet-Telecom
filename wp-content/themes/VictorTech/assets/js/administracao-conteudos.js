@@ -43,5 +43,34 @@
             grupo.find('.fastnet-previa-imagem').empty();
             $(this).prop('hidden', true);
         });
+
+        $(document).on('click', '.fastnet-adicionar-etapa', function (evento) {
+            evento.preventDefault();
+
+            var botao = $(this);
+            var container = botao.siblings('[data-etapas-container]');
+            var modelo = window.atob(botao.attr('data-etapa-template') || '');
+            var indice = container.children('[data-etapa]').length;
+
+            if (!modelo) {
+                return;
+            }
+
+            container.append(modelo.replace(/__INDICE__/g, String(indice)));
+            atualizarNumeracaoEtapas(container);
+        });
+
+        $(document).on('click', '.fastnet-remover-etapa', function (evento) {
+            evento.preventDefault();
+            var container = $(this).closest('[data-etapas-container]');
+            $(this).closest('[data-etapa]').remove();
+            atualizarNumeracaoEtapas(container);
+        });
+
+        function atualizarNumeracaoEtapas(container) {
+            container.children('[data-etapa]').each(function (indice) {
+                $(this).find('[data-etapa-numero]').text(indice + 1);
+            });
+        }
     });
 }(jQuery));

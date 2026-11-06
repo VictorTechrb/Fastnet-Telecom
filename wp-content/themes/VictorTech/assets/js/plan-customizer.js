@@ -16,7 +16,6 @@
             cartao.querySelectorAll('[data-option-price].is-selected').forEach(function (opcao) {
                 selecionados.push({
                     nome: opcao.getAttribute('data-option-name') || 'Aplicativo',
-                    categoria: opcao.getAttribute('data-option-category') || '',
                     preco: Number(opcao.getAttribute('data-option-price')) || 0
                 });
             });
@@ -94,7 +93,6 @@
                 var linhasAplicativos = aplicativos.length
                     ? aplicativos.map(function (aplicativo) {
                         return '- ' + aplicativo.nome +
-                            (aplicativo.categoria ? ' (' + aplicativo.categoria + ')' : '') +
                             ': R$ ' + aplicativo.preco.toLocaleString('pt-BR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2

@@ -92,7 +92,7 @@ $link_contratacao      = ! empty( $dados['link_contratacao'] ) ? $dados['link_co
                     >
                         <span class="opcao-aplicativo-nome">
                             <?php if ( ! empty( $aplicativo['imagem_id'] ) ) : ?>
-                                <?php echo wp_get_attachment_image( absint( $aplicativo['imagem_id'] ), 'thumbnail', false, array( 'alt' => '', 'loading' => 'lazy' ) ); ?>
+                                <?php echo wp_get_attachment_image( absint( $aplicativo['imagem_id'] ), 'thumbnail', false, array( 'alt' => $aplicativo['nome'], 'loading' => 'lazy' ) ); ?>
                             <?php endif; ?>
                             <span><?php echo esc_html( $aplicativo['nome'] ); ?></span>
                         </span>

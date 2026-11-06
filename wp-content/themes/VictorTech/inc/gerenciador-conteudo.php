@@ -83,6 +83,7 @@ function fastnet_registrar_tipos_de_conteudo() {
             'menu_position'      => $configuracao['posicao'],
             'hierarchical'       => false,
             'map_meta_cap'       => true,
+            'capability_type'    => 'post',
         );
 
         register_post_type( $slug, $argumentos );
@@ -94,12 +95,12 @@ add_action( 'init', 'fastnet_registrar_tipos_de_conteudo' );
  * Atualiza as rotas uma única vez após a instalação dos novos tipos de conteúdo.
  */
 function fastnet_atualizar_regras_de_reescrita() {
-    if ( '1' === get_option( 'fastnet_gerenciador_regras_versao' ) ) {
+    if ( '2' === get_option( 'fastnet_gerenciador_regras_versao' ) ) {
         return;
     }
 
     flush_rewrite_rules( false );
-    update_option( 'fastnet_gerenciador_regras_versao', '1' );
+    update_option( 'fastnet_gerenciador_regras_versao', '2' );
 }
 add_action( 'init', 'fastnet_atualizar_regras_de_reescrita', 99 );
 
@@ -180,6 +181,58 @@ function fastnet_renderizar_campo_imagem_admin( $dados, $rotulo, $instrucoes = '
             if ( $imagem_id ) {
                 echo wp_get_attachment_image( $imagem_id, 'medium', false, array( 'alt' => '' ) );
             }
+
+            /**
+             * Renderiza uma etapa editável do tutorial de ativação.
+             */
+            function fastnet_renderizar_etapa_admin( $indice, $etapa = array() ) {
+                $indice_admin = is_numeric( $indice ) ? absint( $indice ) : '__INDICE__';
+                $titulo      = isset( $etapa['titulo'] ) ? $etapa['titulo'] : '';
+                $descricao   = isset( $etapa['descricao'] ) ? $etapa['descricao'] : '';
+                $imagem_id   = isset( $etapa['imagem_id'] ) ? absint( $etapa['imagem_id'] ) : 0;
+                $link        = isset( $etapa['link'] ) ? $etapa['link'] : '';
+                $link_texto  = isset( $etapa['link_texto'] ) ? $etapa['link_texto'] : '';
+                $prefixo     = 'fastnet_dados[etapas][' . $indice_admin . ']';
+                ?>
+                <article class="fastnet-etapa-admin" data-etapa>
+                    <div class="fastnet-etapa-admin-cabecalho">
+                        <strong>Etapa <span data-etapa-numero><?php echo esc_html( is_numeric( $indice ) ? absint( $indice ) + 1 : 1 ); ?></span></strong>
+                        <button type="button" class="button-link-delete fastnet-remover-etapa">Excluir etapa</button>
+                    </div>
+                    <div class="fastnet-grade-campos-admin">
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-titulo' ); ?>"><strong>Título da etapa</strong></label>
+                            <input class="widefat" type="text" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-titulo' ); ?>" name="<?php echo esc_attr( $prefixo . '[titulo]' ); ?>" value="<?php echo esc_attr( $titulo ); ?>">
+                        </div>
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-descricao' ); ?>"><strong>Descrição</strong></label>
+                            <textarea class="widefat" rows="3" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-descricao' ); ?>" name="<?php echo esc_attr( $prefixo . '[descricao]' ); ?>"><?php echo esc_textarea( $descricao ); ?></textarea>
+                        </div>
+                    </div>
+                    <div class="fastnet-campo-admin fastnet-campo-imagem">
+                        <strong>Imagem ilustrativa</strong>
+                        <input type="hidden" name="<?php echo esc_attr( $prefixo . '[imagem_id]' ); ?>" value="<?php echo esc_attr( $imagem_id ); ?>">
+                        <div class="fastnet-previa-imagem">
+                            <?php if ( $imagem_id ) : ?>
+                                <?php echo wp_get_attachment_image( $imagem_id, 'medium', false, array( 'alt' => '' ) ); ?>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="button fastnet-selecionar-imagem" data-titulo="Selecionar imagem da etapa">Selecionar imagem</button>
+                        <button type="button" class="button-link-delete fastnet-remover-imagem" <?php echo $imagem_id ? '' : 'hidden'; ?>>Remover imagem</button>
+                    </div>
+                    <div class="fastnet-grade-campos-admin">
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link' ); ?>"><strong>Link opcional</strong></label>
+                            <input class="widefat" type="url" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link' ); ?>" name="<?php echo esc_attr( $prefixo . '[link]' ); ?>" value="<?php echo esc_attr( $link ); ?>">
+                        </div>
+                        <div class="fastnet-campo-admin">
+                            <label for="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link-texto' ); ?>"><strong>Texto do link</strong></label>
+                            <input class="widefat" type="text" id="<?php echo esc_attr( 'fastnet-etapa-' . $indice . '-link-texto' ); ?>" name="<?php echo esc_attr( $prefixo . '[link_texto]' ); ?>" value="<?php echo esc_attr( $link_texto ); ?>">
+                        </div>
+                    </div>
+                </article>
+                <?php
+            }
             ?>
         </div>
         <button type="button" class="button fastnet-selecionar-imagem" data-titulo="<?php echo esc_attr( $rotulo ); ?>">Selecionar imagem</button>
@@ -219,7 +272,11 @@ function fastnet_metabox_aplicativo( $post ) {
     $dados = fastnet_obter_dados_do_conteudo( $post->ID );
     wp_nonce_field( 'fastnet_salvar_dados_conteudo', 'fastnet_nonce_conteudo' );
 
-    echo '<p>Use a imagem destacada do WordPress como logomarca do aplicativo. Os preços abaixo são os valores adicionais por categoria.</p>';
+    fastnet_renderizar_campo_imagem_admin(
+        array( 'imagem_id' => isset( $dados['imagem_id'] ) ? $dados['imagem_id'] : get_post_thumbnail_id( $post->ID ) ),
+        'Logomarca do aplicativo',
+        'Selecione ou altere a logomarca pela biblioteca de mídia do WordPress.'
+    );
     echo '<div class="fastnet-grade-campos-admin">';
     fastnet_renderizar_campo_admin( 'categoria_app', 'Categoria', isset( $dados['categoria_app'] ) ? $dados['categoria_app'] : '', 'select', '', array(
         ''              => 'Selecione uma categoria',
@@ -233,16 +290,27 @@ function fastnet_metabox_aplicativo( $post ) {
     fastnet_renderizar_campo_admin( 'link_site', 'Site oficial', isset( $dados['link_site'] ) ? $dados['link_site'] : '', 'url' );
     fastnet_renderizar_campo_admin( 'link_play_store', 'Link da Google Play', isset( $dados['link_play_store'] ) ? $dados['link_play_store'] : '', 'url' );
     fastnet_renderizar_campo_admin( 'link_app_store', 'Link da App Store', isset( $dados['link_app_store'] ) ? $dados['link_app_store'] : '', 'url' );
+    fastnet_renderizar_campo_admin( 'preco_adicional', 'Preço mensal adicional (R$)', isset( $dados['preco_adicional'] ) ? $dados['preco_adicional'] : '', 'number', 'Informe o valor cobrado para adicionar este aplicativo ao plano.', array( 'step' => '0.01', 'min' => '0' ) );
     echo '</div>';
 
-    echo '<h3>Preços adicionais por categoria</h3>';
-    echo '<p class="description">Preencha somente as categorias em que este aplicativo estiver disponível. Deixe em branco ou use zero quando não se aplicar.</p>';
-    echo '<div class="fastnet-grade-campos-admin fastnet-grade-precos-admin">';
-    fastnet_renderizar_campo_admin( 'preco_padrao', 'Padrão (R$)', isset( $dados['preco_padrao'] ) ? $dados['preco_padrao'] : '', 'number', '', array( 'step' => '0.01', 'min' => '0' ) );
-    fastnet_renderizar_campo_admin( 'preco_avancado', 'Avançado (R$)', isset( $dados['preco_avancado'] ) ? $dados['preco_avancado'] : '', 'number', '', array( 'step' => '0.01', 'min' => '0' ) );
-    fastnet_renderizar_campo_admin( 'preco_top', 'TOP (R$)', isset( $dados['preco_top'] ) ? $dados['preco_top'] : '', 'number', '', array( 'step' => '0.01', 'min' => '0' ) );
-    fastnet_renderizar_campo_admin( 'preco_premium', 'Premium (R$)', isset( $dados['preco_premium'] ) ? $dados['preco_premium'] : '', 'number', '', array( 'step' => '0.01', 'min' => '0' ) );
+    echo '<hr><h3>Passo a passo de ativação</h3>';
+    fastnet_renderizar_campo_admin( 'titulo_tutorial', 'Título do tutorial', isset( $dados['titulo_tutorial'] ) ? $dados['titulo_tutorial'] : '', 'text', 'Exemplo: Como ativar o aplicativo.' );
+    echo '<div class="fastnet-etapas-admin" data-etapas-container>';
+    $etapas = isset( $dados['etapas'] ) && is_array( $dados['etapas'] ) ? array_values( $dados['etapas'] ) : array();
+    foreach ( $etapas as $indice => $etapa ) {
+        fastnet_renderizar_etapa_admin( $indice, is_array( $etapa ) ? $etapa : array() );
+    }
     echo '</div>';
+    echo '<button type="button" class="button button-secondary fastnet-adicionar-etapa" data-etapa-template="' . esc_attr( base64_encode( fastnet_capturar_etapa_admin_template() ) ) . '">Adicionar etapa</button>';
+}
+
+/**
+ * Gera o modelo usado pelo editor de etapas no painel.
+ */
+function fastnet_capturar_etapa_admin_template() {
+    ob_start();
+    fastnet_renderizar_etapa_admin( '__INDICE__' );
+    return ob_get_clean();
 }
 
 /**
@@ -319,13 +387,39 @@ function fastnet_salvar_dados_dos_conteudos( $post_id, $post, $update ) {
     } elseif ( 'aplicativo' === $post->post_type ) {
         $categorias_validas = array( 'Streaming', 'Música', 'Segurança', 'Jogos e rede', 'Outros' );
         $categoria          = isset( $recebidos['categoria_app'] ) ? sanitize_text_field( $recebidos['categoria_app'] ) : '';
+        $dados['imagem_id'] = isset( $recebidos['imagem_id'] ) && wp_attachment_is_image( absint( $recebidos['imagem_id'] ) ) ? absint( $recebidos['imagem_id'] ) : 0;
         $dados['categoria_app'] = in_array( $categoria, $categorias_validas, true ) ? $categoria : '';
         $dados['descricao_curta'] = isset( $recebidos['descricao_curta'] ) ? sanitize_textarea_field( $recebidos['descricao_curta'] ) : '';
         $dados['link_site'] = isset( $recebidos['link_site'] ) ? esc_url_raw( $recebidos['link_site'] ) : '';
         $dados['link_play_store'] = isset( $recebidos['link_play_store'] ) ? esc_url_raw( $recebidos['link_play_store'] ) : '';
         $dados['link_app_store'] = isset( $recebidos['link_app_store'] ) ? esc_url_raw( $recebidos['link_app_store'] ) : '';
-        foreach ( array( 'preco_padrao', 'preco_avancado', 'preco_top', 'preco_premium' ) as $campo_preco ) {
-            $dados[ $campo_preco ] = isset( $recebidos[ $campo_preco ] ) ? fastnet_normalizar_preco( $recebidos[ $campo_preco ] ) : 0;
+        $dados['preco_adicional'] = isset( $recebidos['preco_adicional'] ) ? fastnet_normalizar_preco( $recebidos['preco_adicional'] ) : 0;
+        $dados['titulo_tutorial'] = isset( $recebidos['titulo_tutorial'] ) ? sanitize_text_field( $recebidos['titulo_tutorial'] ) : '';
+        $dados['etapas'] = array();
+        if ( isset( $recebidos['etapas'] ) && is_array( $recebidos['etapas'] ) ) {
+            foreach ( $recebidos['etapas'] as $etapa ) {
+                if ( ! is_array( $etapa ) ) {
+                    continue;
+                }
+
+                $imagem_id = isset( $etapa['imagem_id'] ) ? absint( $etapa['imagem_id'] ) : 0;
+                $titulo    = isset( $etapa['titulo'] ) ? sanitize_text_field( $etapa['titulo'] ) : '';
+                $descricao = isset( $etapa['descricao'] ) ? sanitize_textarea_field( $etapa['descricao'] ) : '';
+                $link      = isset( $etapa['link'] ) ? esc_url_raw( $etapa['link'] ) : '';
+                $link_texto = isset( $etapa['link_texto'] ) ? sanitize_text_field( $etapa['link_texto'] ) : '';
+
+                if ( '' === $titulo && '' === $descricao && ! $imagem_id && '' === $link ) {
+                    continue;
+                }
+
+                $dados['etapas'][] = array(
+                    'titulo'     => $titulo,
+                    'descricao'  => $descricao,
+                    'imagem_id'  => $imagem_id && wp_attachment_is_image( $imagem_id ) ? $imagem_id : 0,
+                    'link'       => $link,
+                    'link_texto' => $link_texto,
+                );
+            }
         }
     } elseif ( 'aplicativo_incluso' === $post->post_type ) {
         $imagem_id = isset( $recebidos['imagem_id'] ) ? absint( $recebidos['imagem_id'] ) : 0;
@@ -342,6 +436,45 @@ function fastnet_salvar_dados_dos_conteudos( $post_id, $post, $update ) {
     update_post_meta( $post_id, '_fastnet_dados_conteudo', $dados );
 }
 add_action( 'save_post', 'fastnet_salvar_dados_dos_conteudos', 10, 3 );
+
+/**
+ * Migra o menor preço legado para o preço único dos aplicativos.
+ */
+function fastnet_migrar_precos_aplicativos() {
+    if ( '1' === get_option( 'fastnet_precos_aplicativos_migrados' ) ) {
+        return;
+    }
+
+    $aplicativos = get_posts(
+        array(
+            'post_type'      => 'aplicativo',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        )
+    );
+
+    foreach ( $aplicativos as $aplicativo_id ) {
+        $dados = fastnet_obter_dados_do_conteudo( $aplicativo_id );
+
+        if ( array_key_exists( 'preco_adicional', $dados ) ) {
+            continue;
+        }
+
+        $precos_legados = array();
+        foreach ( array( 'preco_padrao', 'preco_avancado', 'preco_top', 'preco_premium' ) as $campo ) {
+            if ( isset( $dados[ $campo ] ) && (float) $dados[ $campo ] > 0 ) {
+                $precos_legados[] = (float) $dados[ $campo ];
+            }
+        }
+
+        $dados['preco_adicional'] = ! empty( $precos_legados ) ? min( $precos_legados ) : 0;
+        update_post_meta( $aplicativo_id, '_fastnet_dados_conteudo', $dados );
+    }
+
+    update_option( 'fastnet_precos_aplicativos_migrados', '1' );
+}
+add_action( 'init', 'fastnet_migrar_precos_aplicativos', 20 );
 
 /**
  * Configurações gerais de conteúdo da página inicial.
@@ -504,55 +637,7 @@ function fastnet_obter_banners() {
 }
 
 /**
- * Retorna os aplicativos adicionais agrupados por categoria de preço.
- */
-function fastnet_obter_aplicativos_por_categoria() {
-    $categorias = array(
-        'padrao'    => array( 'titulo' => 'Padrão', 'apps' => array() ),
-        'avancado'  => array( 'titulo' => 'Avançado', 'apps' => array() ),
-        'top'       => array( 'titulo' => 'TOP', 'apps' => array() ),
-        'premium'   => array( 'titulo' => 'Premium', 'apps' => array() ),
-    );
-
-    $publicacoes = get_posts( array(
-        'post_type'      => 'aplicativo',
-        'post_status'    => 'publish',
-        'posts_per_page' => -1,
-        'orderby'        => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
-    ) );
-
-    $campos_preco = array(
-        'padrao'   => 'preco_padrao',
-        'avancado' => 'preco_avancado',
-        'top'      => 'preco_top',
-        'premium'  => 'preco_premium',
-    );
-
-    foreach ( $publicacoes as $publicacao ) {
-        $dados     = fastnet_obter_dados_do_conteudo( $publicacao->ID );
-        $imagem_id = get_post_thumbnail_id( $publicacao->ID );
-
-        foreach ( $campos_preco as $categoria => $campo_preco ) {
-            $preco = isset( $dados[ $campo_preco ] ) ? (float) $dados[ $campo_preco ] : 0;
-
-            if ( $preco <= 0 ) {
-                continue;
-            }
-
-            $categorias[ $categoria ]['apps'][] = array(
-                'nome'      => get_the_title( $publicacao->ID ),
-                'preco'     => $preco,
-                'imagem_id' => $imagem_id,
-                'descricao' => isset( $dados['descricao_curta'] ) ? $dados['descricao_curta'] : '',
-            );
-        }
-    }
-
-    return $categorias;
-}
-
-/**
- * Retorna cada aplicativo adicional uma única vez para a lista dos planos.
+ * Retorna os aplicativos adicionais publicados para a lista dos planos.
  */
 function fastnet_obter_aplicativos_adicionais() {
     $aplicativos = array();
@@ -564,27 +649,17 @@ function fastnet_obter_aplicativos_adicionais() {
     ) );
 
     foreach ( $publicacoes as $publicacao ) {
-        $dados  = fastnet_obter_dados_do_conteudo( $publicacao->ID );
-        $precos = array_filter(
-            array(
-                isset( $dados['preco_padrao'] ) ? (float) $dados['preco_padrao'] : 0,
-                isset( $dados['preco_avancado'] ) ? (float) $dados['preco_avancado'] : 0,
-                isset( $dados['preco_top'] ) ? (float) $dados['preco_top'] : 0,
-                isset( $dados['preco_premium'] ) ? (float) $dados['preco_premium'] : 0,
-            ),
-            function ( $preco ) {
-                return $preco > 0;
-            }
-        );
+        $dados = fastnet_obter_dados_do_conteudo( $publicacao->ID );
+        $preco = isset( $dados['preco_adicional'] ) ? (float) $dados['preco_adicional'] : 0;
 
-        if ( empty( $precos ) ) {
+        if ( $preco <= 0 ) {
             continue;
         }
 
         $aplicativos[] = array(
             'nome'      => get_the_title( $publicacao->ID ),
-            'preco'     => min( $precos ),
-            'imagem_id' => get_post_thumbnail_id( $publicacao->ID ),
+            'preco'     => $preco,
+            'imagem_id' => array_key_exists( 'imagem_id', $dados ) ? absint( $dados['imagem_id'] ) : get_post_thumbnail_id( $publicacao->ID ),
         );
     }
 
@@ -628,7 +703,7 @@ function fastnet_carregar_recursos_admin_conteudo( $pagina ) {
         file_exists( $diretorio . '/assets/css/administracao-conteudos.css' ) ? filemtime( $diretorio . '/assets/css/administracao-conteudos.css' ) : '1.0.0'
     );
 
-    if ( ! in_array( $tela->post_type, array( 'aplicativo_incluso', 'banner_fastnet' ), true ) ) {
+    if ( ! in_array( $tela->post_type, array( 'aplicativo', 'aplicativo_incluso', 'banner_fastnet' ), true ) ) {
         return;
     }
 
@@ -664,7 +739,7 @@ function fastnet_colunas_lista_aplicativos( $colunas ) {
         'cb'        => isset( $colunas['cb'] ) ? $colunas['cb'] : '',
         'title'     => 'Aplicativo',
         'categoria' => 'Categoria',
-        'precos'    => 'Preços cadastrados',
+        'preco'     => 'Preço mensal adicional',
         'date'      => 'Data',
     );
 }
@@ -706,14 +781,8 @@ function fastnet_renderizar_colunas_lista( $coluna, $post_id ) {
     } elseif ( 'aplicativo' === $tipo ) {
         if ( 'categoria' === $coluna ) {
             echo esc_html( isset( $dados['categoria_app'] ) ? $dados['categoria_app'] : '—' );
-        } elseif ( 'precos' === $coluna ) {
-            $quantidade = 0;
-            foreach ( array( 'preco_padrao', 'preco_avancado', 'preco_top', 'preco_premium' ) as $campo ) {
-                if ( ! empty( $dados[ $campo ] ) ) {
-                    $quantidade++;
-                }
-            }
-            echo esc_html( $quantidade . ' de 4 categorias' );
+        } elseif ( 'preco' === $coluna && isset( $dados['preco_adicional'] ) ) {
+            echo esc_html( 'R$ ' . number_format_i18n( (float) $dados['preco_adicional'], 2 ) );
         }
     } elseif ( 'aplicativo_incluso' === $tipo && 'logo' === $coluna ) {
         if ( ! empty( $dados['imagem_id'] ) ) {

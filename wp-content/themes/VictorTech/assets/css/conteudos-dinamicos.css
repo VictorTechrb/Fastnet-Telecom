@@ -292,6 +292,32 @@
     gap: 22px;
 }
 
+.filtros-aplicativos-fastnet {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 28px;
+}
+
+.filtro-aplicativo-fastnet {
+    padding: 9px 16px;
+    border: 1px solid var(--cinza-linha, #e5e7eb);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--texto-corpo, #4b5563);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.filtro-aplicativo-fastnet.is-active,
+.filtro-aplicativo-fastnet:hover,
+.filtro-aplicativo-fastnet:focus-visible {
+    border-color: var(--vermelho-fastnet, #e52323);
+    background: var(--vermelho-fastnet, #e52323);
+    color: #fff;
+}
+
 .cartao-aplicativo-fastnet {
     display: flex;
     min-width: 0;
@@ -327,6 +353,13 @@
 .cartao-aplicativo-fastnet p {
     color: var(--texto-corpo, #4b5563);
     font-size: .9rem;
+}
+
+.cartao-aplicativo-fastnet-categoria {
+    margin: 0 0 8px;
+    color: var(--vermelho-dark, #b71c1c) !important;
+    font-size: .78rem !important;
+    text-transform: uppercase;
 }
 
 .cartao-aplicativo-fastnet a {
@@ -382,6 +415,59 @@
     background: #fff;
     color: var(--preto-tech, #111827);
     font-size: .88rem;
+}
+
+.tutorial-aplicativo-fastnet {
+    margin-top: 40px;
+}
+
+.etapas-aplicativo-fastnet {
+    display: grid;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.etapa-aplicativo-fastnet {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--cinza-linha, #e5e7eb);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, .05);
+}
+
+.etapa-aplicativo-fastnet-numero {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--vermelho-fastnet, #e52323);
+    color: #fff;
+    font-weight: 800;
+}
+
+.etapa-aplicativo-fastnet-conteudo img {
+    display: block;
+    max-width: 100%;
+    max-height: 260px;
+    margin-bottom: 14px;
+    object-fit: contain;
+}
+
+.etapa-aplicativo-fastnet-conteudo h3 {
+    margin: 0 0 8px;
+}
+
+.etapa-aplicativo-fastnet-conteudo p {
+    color: var(--texto-corpo, #4b5563);
+}
+
+.etapa-aplicativo-fastnet-conteudo a {
+    color: var(--vermelho-dark, #b71c1c);
+    font-weight: 700;
 }
 
 .secao-planos-banda-larga {
@@ -633,6 +719,76 @@
     }
 }
 
+@media (max-width: 620px) {
+    .grade-planos-telecom {
+        width: 100%;
+        max-width: 400px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        padding: 0;
+    }
+
+    .cartao-plano-fastnet,
+    .cartao-plano-fastnet--destaque {
+        width: 100%;
+        min-width: 0;
+        padding: 22px 28px;
+        border-radius: 20px;
+        transform: none;
+    }
+
+    .cartao-plano-fastnet:hover,
+    .cartao-plano-fastnet--destaque:hover {
+        transform: none;
+    }
+
+    .plano-selo-destaque {
+        top: 20px;
+        right: 20px;
+        left: 20px;
+    }
+
+    .plano-velocidade strong {
+        font-size: clamp(3.6rem, 18vw, 4.8rem);
+    }
+
+    .grade-aplicativos-inclusos {
+        grid-template-columns: repeat(4, minmax(42px, 1fr));
+        gap: 8px;
+    }
+
+    .icone-aplicativo-incluso {
+        min-height: 56px;
+    }
+
+    .opcao-aplicativo {
+        min-height: 48px;
+        padding: 9px 12px;
+        font-size: .72rem;
+    }
+
+    .opcao-aplicativo-preco {
+        font-size: .68rem;
+    }
+
+    .plano-total {
+        min-height: 52px;
+        align-items: center;
+        margin-top: 14px;
+        padding: 12px 14px;
+        font-size: .78rem;
+    }
+
+    .plano-total strong {
+        font-size: 1rem;
+    }
+
+    .plano-botao-contratar {
+        min-height: 58px;
+        font-size: .78rem;
+    }
+}
+
 /* Cartões de planos da home */
 .grade-planos-telecom {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -699,12 +855,13 @@
     margin: 0;
     padding: 7px 10px;
     border: 1px solid rgba(255, 255, 255, .18);
-    border-radius: 999px;
+    border-radius: 10px;
     background: var(--vermelho-fastnet, #e3202b);
     color: #fff;
     font-size: .61rem;
     font-weight: 800;
-    letter-spacing: .06em;
+    letter-spacing: .09em;
+    text-align: center;
     text-transform: uppercase;
 }
 
@@ -1001,6 +1158,22 @@
     .cartao-plano-fastnet {
         padding: 30px 22px 22px;
         border-radius: 18px;
+    }
+
+    .cartao-plano-fastnet--destaque {
+        padding-top: 58px;
+    }
+
+    .plano-selo-destaque {
+        top: 14px;
+        right: 14px;
+        left: 14px;
+        padding: 6px 8px;
+        font-size: .58rem;
+    }
+
+    .cartao-plano-fastnet--destaque .plano-nome {
+        padding-right: 0;
     }
 
     .plano-velocidade strong {
