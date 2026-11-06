@@ -719,6 +719,76 @@
     }
 }
 
+@media (max-width: 620px) {
+    .grade-planos-telecom {
+        width: 100%;
+        max-width: 400px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        padding: 0;
+    }
+
+    .cartao-plano-fastnet,
+    .cartao-plano-fastnet--destaque {
+        width: 100%;
+        min-width: 0;
+        padding: 64px 28px 22px;
+        border-radius: 20px;
+        transform: none;
+    }
+
+    .cartao-plano-fastnet:hover,
+    .cartao-plano-fastnet--destaque:hover {
+        transform: none;
+    }
+
+    .plano-selo-destaque {
+        top: 20px;
+        right: 26px;
+        left: 26px;
+    }
+
+    .plano-velocidade strong {
+        font-size: clamp(3.6rem, 18vw, 4.8rem);
+    }
+
+    .grade-aplicativos-inclusos {
+        grid-template-columns: repeat(4, minmax(42px, 1fr));
+        gap: 8px;
+    }
+
+    .icone-aplicativo-incluso {
+        min-height: 56px;
+    }
+
+    .opcao-aplicativo {
+        min-height: 48px;
+        padding: 9px 12px;
+        font-size: .72rem;
+    }
+
+    .opcao-aplicativo-preco {
+        font-size: .68rem;
+    }
+
+    .plano-total {
+        min-height: 52px;
+        align-items: center;
+        margin-top: 14px;
+        padding: 12px 14px;
+        font-size: .78rem;
+    }
+
+    .plano-total strong {
+        font-size: 1rem;
+    }
+
+    .plano-botao-contratar {
+        min-height: 58px;
+        font-size: .78rem;
+    }
+}
+
 /* Cartões de planos da home */
 .grade-planos-telecom {
     grid-template-columns: repeat(4, minmax(0, 1fr));
